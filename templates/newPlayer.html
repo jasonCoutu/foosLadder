@@ -1,0 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+{%  from 'macros.html' import playerSel %}
+
+<html>
+<head>
+    <title>New Player Entry</title>
+</head>
+<body>
+<span><h1>New Player entry Form</h1></span>
+<form title="newPlayer" action="/newPlayer" method="POST">
+    First Name   :<input name="fname" value=""/><br>
+    Last Name    :<input name="lname"/><br>
+    Skill:{{   playerSel(keys, names, 'skillBaseVal') }}
+
+
+    </select><br>
+    db key       :<input name="key" value="{{ playerKey }}" readonly="True"/><br>
+    <input type="submit"/>
+
+
+</form>
+<br>
+<a href="/"> Back To Main</a>
+</body>
+</html>

@@ -1,0 +1,19 @@
+
+{% macro playerSel(names, keys, name='selector') -%}
+<select name={{ name }}>
+    {% for key in keys %}
+        <option value="{{ key }}">  {{names[loop.index0]}}
+    {% endfor %}
+
+</select>
+{%- endmacro %}
+
+{% macro playerScore( name='p1g1') -%}
+<select name={{ name }}>
+    {% for key in '012345'%}
+        <option value="{{ key }}">  {{key}}
+    {% endfor %}
+
+</select>
+{%- endmacro %}
+

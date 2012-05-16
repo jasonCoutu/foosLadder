@@ -1,0 +1,17 @@
+<html>
+<head>
+    <title>Foosball Ladder - Player Selector</title>
+</head>
+<body>
+{%  from 'macros.html' import playerSel %}
+
+
+<h1>Foos Player Selector</h1>
+
+<form action="/page2" method="POST">
+    {{   playerSel(names, keys) }}
+    <input type="submit">
+</form>
+</body>
+
+</html>

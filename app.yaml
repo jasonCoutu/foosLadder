@@ -1,0 +1,15 @@
+application: vendladder
+version: foos-1
+runtime: python27
+api_version: 1
+threadsafe: false
+
+libraries:
+- name: jinja2
+  version: latest
+
+handlers:
+- url: /.*
+  script: main.app
+- url: /mgmt/.*
+  script: main.app2

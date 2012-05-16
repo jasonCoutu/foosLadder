@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title></title>
+</head>
+{% from 'macros.html' import playerSel %}
+{% from 'macros.html' import playerScore %}
+<body>
+
+<form action="/ladder" method="POST">
+    {{   playerSel(user, userKey, 'player1') }}
+    {{   playerSel(names, keys, 'player2') }}
+<br>
+    {{   playerScore('p1g1') }}
+    {{   playerScore('p2g1') }}
+    <br>
+    {{   playerScore('p1g2') }}
+    {{   playerScore('p2g2') }}
+    <br>
+    {{   playerScore('p1g3') }}
+    {{   playerScore('p2g3') }}
+<br>
+    <input type="submit">Submit Score</input>
+</form>
+
+
+</body>
+</html>
