@@ -133,8 +133,11 @@ class newPlayerView(TemplatedView):
 
     def get(self):
         player = users.get_current_user()
-
-        self.render_response('newPlayer.html', names=skillBase_names.keys() , keys=skillBase_names.keys(), nick=player.nickname(), playerKey=player.email())
+        table = []
+        for i,j in skillBase_names.iteritems():
+            table.append([j,i])
+        table.sort()
+        self.render_response( 'newPlayer.html', table=table, names=skillBase_names.keys() , keys=skillBase_names.keys(), nick=player.nickname(), playerKey=player.email())
 
     def post(self):
         logging.debug("Starting new Player %s" % self.request.POST["key"] )
