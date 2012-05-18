@@ -1,6 +1,6 @@
 from google.appengine.ext import ndb
 
-skillBase_names = {'pro':1200,'semi-pro':900, 'elite':700, 'advanced':500, 'adpet':400, 'novice':200,'begginer':100}
+skillBase_names = {'pro':1200,'semi-pro':900, 'elite':700, 'advanced':500, 'adept':400, 'novice':200,'beginner':100}
 
 
 class PlayerModel(ndb.Model):
@@ -24,3 +24,4 @@ class MatchModel(ndb.Model):
     player1 = ndb.StringProperty(required=True)
     player2 = ndb.StringProperty(required=True)
     scores = ndb.StructuredProperty(GameModel,repeated=True)
+    baseValue = ndb.IntegerProperty(required=True)

@@ -43,6 +43,21 @@ class reportView(TemplatedView):
 class ladderView(TemplatedView):
 
     def post(self):
+        """
+            formula for scoreing:
+                Winner's skill  (ws)
+                Loser's skill   (ls)
+                Base points     (bp)
+                Bonus Points    (pb)
+                Point Diff      (pd)
+
+                wp - lp = bp
+                if bp <20 : bp = 20
+                pb = bp*pd/10
+                ws = ws + bp + pb
+                ls = ls - bp - pb
+
+        """
         game1 = GameModel()
         game1.player1 = int(self.request.POST['p1g1'])
         game1.player2 = int(self.request.POST['p2g1'])
@@ -56,7 +71,6 @@ class ladderView(TemplatedView):
         a.player1 = self.request.POST['player1']
         a.player2 = self.request.POST['player2']
         a.scores = [game1, game2, game3 ]
-        a.put()
         players = ndb.get_multi([ndb.Key(PlayerModel, a.player1), ndb.Key(PlayerModel, a.player2)])
         p1_total = game1.player1 + game2.player1 + game3.player1
         p2_total = game1.player2 + game2.player2 + game3.player2
@@ -81,6 +95,9 @@ class ladderView(TemplatedView):
         elif basePoints < 20:
             basePoints = 20
 
+        a.baseValue = basePoints
+        a.put()
+
         bonusPoints = int((basePoints*point_dff)/10)
 
         winner.skillScore = winner.skillScore + basePoints + bonusPoints
@@ -91,21 +108,6 @@ class ladderView(TemplatedView):
         winner.put()
         loser.put()
 
-        """
-            formula for scoreing:
-                Winner's skill  (ws)
-                Loser's skill   (ls)
-                Base points     (bp)
-                Bonus Points    (pb)
-                Point Diff      (pd)
-
-                wp - lp = bp
-                if bp <20 : bp = 20
-                pb = bp*pd/10
-                ws = ws + bp + pb
-                ls = ls - bp - pb
-
-        """
         #print self.request.POST
         self.get()
 
