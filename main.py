@@ -6,7 +6,7 @@ ROUTES = [
     Route('/page2', handler='views.playerView'),
     Route('/newPlayer', handler='views.newPlayerView'),
     Route('/selector', handler='views.selectorView'),
-    Route('/ladder', handler='views.ladderView'),
+    Route('/ladder', handler='ladder.ladderView'),
     Route('/recordGame', handler='views.reportView'),
     Route('/reportGame', handler='views.reportView'),
 
