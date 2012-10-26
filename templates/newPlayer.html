@@ -1,12 +1,9 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
+{% extends "base.html" %}
 {%  from 'macros.html' import playerSel %}
 
-<html>
-<head>
-    <title>New Player Entry</title>
-</head>
-<body>
+{% block title %}New Player Entry{% endblock %}
+
+{% block page_content %}
 <span><h1>New Player entry Form</h1></span>
 <form title="newPlayer" action="/newPlayer" method="POST">
     First Name   :<input name="fname" value=""/><br>
@@ -27,5 +24,4 @@
 </form>
 <br>
 <a href="/"> Back To Main</a>
-</body>
-</html>
+{% endblock %}

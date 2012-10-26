@@ -1,13 +1,10 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-    <title></title>
-</head>
+{% extends "base.html" %}
 {% from 'macros.html' import playerSel %}
 {% from 'macros.html' import playerScore %}
-<body>
 
+{% block title %}Report a Game (or two){% endblock %}
+
+{% block page_content %}
 <form action="/ladder" method="POST">
     {{   playerSel(user, userKey, 'player1') }}
     {{   playerSel(names, keys, 'player2') }}
@@ -23,7 +20,4 @@
 <br>
     <input type="submit">Submit Score</input>
 </form>
-
-
-</body>
-</html>
+{% endblock %}

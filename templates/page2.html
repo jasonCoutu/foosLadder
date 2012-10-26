@@ -1,12 +1,10 @@
-<html>
-<head>
-    <title>
+{% extends "base.html" %}
+    {% block title %}
         Player View - {{ name }} {{ last }}
-    </title>
-</head>
-<body>
+    {% endblock %}
+
+{% block page_content %}
 Name:{{name}} {{last}}<br>
 Skill Score: {{skill}}<br>
 Games (w/l): {{wins}}/{{loses}}
-</body>
-</html>
+{% endblock %}
