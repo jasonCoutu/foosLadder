@@ -11,5 +11,9 @@ libraries:
 handlers:
 - url: /.*
   script: main.app
+
 - url: /mgmt/.*
   script: main.app2
+
+- url: /static
+  static_dir: /static
