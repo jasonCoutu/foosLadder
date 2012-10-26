@@ -3,12 +3,16 @@
 <html>
 <head>
     <title>{% block title %}VendAsta Foos Ladder{% endblock %}</title>
-    <link href="/static/stylesheets/global.css" media="screen, projection" rel="stylesheet" type="text/css" />
+    <link href="/static/css/global.css" media="screen, projection" rel="stylesheet" type="text/css" />
     {% block styling %}{% endblock %}
 </head>
 <body>
-{% block page_content %}
+<h1 class="centered_header">
+    {% block heading %}{% endblock %}
+</h1>
 
-{% endblock %}
+<div class="page_content">
+    {% block page_content %}{% endblock %}
+</div>
 </body>
 </html>

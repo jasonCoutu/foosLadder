@@ -2,45 +2,17 @@
 
 {% block title %}Current Ladder</title>{% endblock %}
 
-{% block styling %}
-    <style type="text/css">
-        #Players
-        {
-            font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
-            width:80%;
-            border-collapse:collapse;
-        }
-        #Players td, #Players th
-        {
-            font-size:1em;
-            border:1px solid #98bf21;
-            padding:3px 7px 2px 7px;
-        }
-        #Players th
-        {
-            font-size:1.1em;
-            text-align:left;
-            padding-top:5px;
-            padding-bottom:4px;
-            background-color:#A7C942;
-            color:#ffffff;
-        }
-        #Players tr.alt td
-        {
-            color:#000000;
-            background-color:#EAF2D3;
-        }
-    </style>
-{% endblock %}
-
+{% block heading %}Ladder{% endblock %}
 {% block page_content %}
-<span><h1>Ladder</h1></span>
-There are currently {{ numplayers }} Players in the ladder, {{ active }} have been active in the past month.
+<p>There are currently {{ numplayers }} Players in the ladder, {{ active }} have been active in the past month.</p>
 
-<br>
+<div class="centered2">
 <table id="Players">
 
-  <tr><th> Name </th>  <th>SkillScore</th></tr>
+  <tr>
+      <th>Name</th>
+      <th>SkillScore</th>
+  </tr>
 {% set odd=True %}
 {%  for player in players %}
     {% if odd %}
@@ -50,12 +22,12 @@ There are currently {{ numplayers }} Players in the ladder, {{ active }} have be
         <tr class="alt">
         {% set odd=True %}
     {% endif %}
-    <td>{{ player.first_name}} &nbsp {{player.last_name}}</td><td> {{player.skillScore}}</td></tr>
-
-
+            <td>{{ player.first_name}} {{player.last_name}}</td>
+            <td> {{player.skillScore}}</td>
+        </tr>
 {% endfor %}
 </table>
-
-<br>
-<a href="/">Back to Main</a> <br>
+</div>
+<br />
+<p><a href="/"><button>Back to main</button></a></p>
 {% endblock %}

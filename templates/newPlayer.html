@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{%  from 'macros.html' import playerSel %}
+{% from 'macros.html' import playerSel %}
 
 {% block title %}New Player Entry{% endblock %}
 
+{% block heading %}New Player Entry Form{% endblock %}
 {% block page_content %}
-<span><h1>New Player entry Form</h1></span>
 <form title="newPlayer" action="/newPlayer" method="POST">
     First Name   :<input name="fname" value=""/><br>
     Last Name    :<input name="lname"/><br>
@@ -14,14 +14,13 @@
     </select><br>
     db key       :<input name="key" value="{{ playerKey }}" readonly="True"/><br>
     <input type="submit"/>
-<table>
-<tr><th>Name</th><th>Value</th></tr>
-    {% for value in table %}
-<tr><td>{{ value[1] }}</td><td>{{ value[0] }}</td></tr>
-    {% endfor %}
-
-</table>
 </form>
-<br>
-<a href="/"> Back To Main</a>
+
+Value to Skill comparison table:
+<table id="Players">
+    <tr><th>Name</th><th>Value</th></tr>
+    {% for value in table %}
+        <tr><td>{{ value[1] }}</td><td>{{ value[0] }}</td></tr>
+    {% endfor %}
+</table>
 {% endblock %}

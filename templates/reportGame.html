@@ -2,22 +2,28 @@
 {% from 'macros.html' import playerSel %}
 {% from 'macros.html' import playerScore %}
 
-{% block title %}Report a Game (or two){% endblock %}
-
+{% block title %}Report a Game{% endblock %}
+{% block heading %}Report a Game{% endblock %}
 {% block page_content %}
 <form action="/ladder" method="POST">
+  <b>Players</b>
     {{   playerSel(user, userKey, 'player1') }}
     {{   playerSel(names, keys, 'player2') }}
-<br>
+<br><br>
+    <b>Game 1</b>
     {{   playerScore('p1g1') }}
     {{   playerScore('p2g1') }}
-    <br>
+<br>
+    <b>Game 2</b>
     {{   playerScore('p1g2') }}
     {{   playerScore('p2g2') }}
-    <br>
+<br>
+    <b>Game 3</b>
     {{   playerScore('p1g3') }}
     {{   playerScore('p2g3') }}
 <br>
-    <input type="submit">Submit Score</input>
+    <input type="submit" value="Submit Scores!" />
 </form>
+
+<p><a href="/"><button>Back to main</button></a></p>
 {% endblock %}

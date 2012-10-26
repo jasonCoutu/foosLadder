@@ -1,6 +1,58 @@
 @import "screen.scss";
 
-.centered {
+h1 {
+  font-size: 2em;
+}
+
+.centered_header {
   text-align: center;
-  background-color: blue;
+  color: white;
+  background-color: #4c7b65;
+}
+
+body {
+  font-family: sans-serif;
+  background-color: #EEEEEE;
+}
+
+.page_content {
+  text-align: center;
+}
+
+// Styling the ladder in /ladder
+#Players {
+  margin-left: auto;
+  margin-right: auto;
+  width:40%;
+  border-collapse:collapse;
+}
+
+#Players td, #Players th {
+  font-size:1em;
+  text-align:center;
+  border:1px solid #c6c9ac;
+  padding:3px 7px 2px 7px;
+}
+
+#Players th {
+  font-size:1.1em;
+  text-align:center;
+  padding-top:5px;
+  padding-bottom:4px;
+  background-color: #c6c9ac;
+  color:#ffffff;
+}
+
+#Players tr.alt td {
+  color:#000000;
+  background-color: #d4d7ba;
+}
+
+div.centered2 {
+  text-align: center;
+}
+
+div.centered2 table {
+  margin: 0 auto;
+  text-align: left;
 }

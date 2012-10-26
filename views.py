@@ -15,8 +15,8 @@ class TemplatedView(RequestHandler):
         content = self.jinja2.render_template(template, **context)
         self.response.write(content)
 
-class selectorView(TemplatedView):
 
+class selectorView(TemplatedView):
 
     def get(self):
         keys = []
@@ -26,8 +26,8 @@ class selectorView(TemplatedView):
         logging.info("::::")
         self.render_response('selector.html', names=name_list.values(), keys=name_list.keys())
 
-class reportView(TemplatedView):
 
+class reportView(TemplatedView):
 
     def get(self):
         keys = []
@@ -39,14 +39,13 @@ class reportView(TemplatedView):
         self.render_response('reportGame.html', user=[name_list[user.email()], ], userKey=[user.email()] , names=name_list.values(), keys=name_list.keys())
 
 
-
-
 class playerView(TemplatedView):
     
     def post(self):
         key=ndb.Key(PlayerModel, self.request.POST['selector'])
         a = key.get()
-        self.render_response('page2.html', name=a.first_name, last=a.last_name,skill=a.skillScore, wins=a.gamesWon, loses=(a.gamesPlayed - a.gamesWon) )
+        self.render_response('player.html', name=a.first_name, last=a.last_name,skill=a.skillScore, wins=a.gamesWon, loses=(a.gamesPlayed - a.gamesWon) )
+
 
 class newPlayerView(TemplatedView):
 
@@ -102,7 +101,6 @@ class newPlayerView(TemplatedView):
 
 
 class mainView(TemplatedView):
-
 
     def get(self):
         user=users.get_current_user()
