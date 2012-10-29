@@ -1,13 +1,10 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
-{%  from 'macros.html' import playerSel %}
+{% extends "base.html" %}
+{% from 'macros.html' import playerSel %}
 
-<html>
-<head>
-    <title>New Player Entry</title>
-</head>
-<body>
-<span><h1>New Player entry Form</h1></span>
+{% block title %}New Player Entry{% endblock %}
+
+{% block heading %}New Player Entry Form{% endblock %}
+{% block page_content %}
 <form title="newPlayer" action="/newPlayer" method="POST">
     First Name   :<input name="fname" value=""/><br>
     Last Name    :<input name="lname"/><br>
@@ -16,16 +13,14 @@
 
     </select><br>
     db key       :<input name="key" value="{{ playerKey }}" readonly="True"/><br>
-    <input type="submit"/>
-<table>
-<tr><th>Name</th><th>Value</th></tr>
-    {% for value in table %}
-<tr><td>{{ value[1] }}</td><td>{{ value[0] }}</td></tr>
-    {% endfor %}
-
-</table>
+    <input type="submit" value="Submit"/>
 </form>
-<br>
-<a href="/"> Back To Main</a>
-</body>
-</html>
+
+Value to Skill comparison table:
+<table id="Players">
+    <tr><th>Name</th><th>Value</th></tr>
+    {% for value in table %}
+        <tr><td>{{ value[1] }}</td><td>{{ value[0] }}</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

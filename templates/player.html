@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+    {% block title %}
+        Player Lookup - {{ name }} {{ last }}
+    {% endblock %}
+
+{% block heading %}Player Lookup{% endblock %}
+{% block page_content %}
+    Name:{{name}} {{last}}<br />
+    Skill Score: {{skill}}<br />
+    Games (w/l): {{wins}}/{{loses}}<br /><br />
+    <a href="selector"><button>Look up another player</button></a>
+    <a href="/"><button>Back to main</button></a>
+{% endblock %}

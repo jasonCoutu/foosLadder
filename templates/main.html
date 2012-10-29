@@ -1,21 +1,15 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-    <title>VendAsta Foos Ladder</title>
-</head>
-<body>
-<center><h1>VendAsta Foos Ladder</h1></center>
-<br>
-{{ name }}
-<br>
-<a href="{{ logout }}">Sign out</a>
-<br>
-<a href="selector">Look Up a Player</a>
-<br>
-<a href="ladder">Current Ladder</a>
-<br>
-<a href="/recordGame">Record a Game</a>
+{% extends "base.html" %}
+{% block title %}VendAsta Foos Ladder{% endblock %}
 
-</body>
-</html>
+{% block page_content %}
+    {% block heading %}VendAsta Foos Ladder{% endblock %}
+
+    <div>Welcome, {{ name }}</div>
+
+    <div data-role="controlgroup">
+        <a href="/selector"><button>Look Up a Player</button></a>
+        <a href="/ladder"><button>Current Ladder</button></a>
+        <a href="/recordGame"><button>Record a Game</button></a>
+    </div>
+    <a href="{{ logout }}"><button>Sign out</button></a>
+{% endblock %}
