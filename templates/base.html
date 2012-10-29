@@ -2,16 +2,28 @@
 <html>
 <head>
     <title>{% block title %}VendAsta Foos Ladder{% endblock %}</title>
+
     <link href="/static/css/global.css" media="screen, projection" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
+    <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     {% block styling %}{% endblock %}
 </head>
 <body>
-<h1 class="centered_header">
-    {% block heading %}{% endblock %}
-</h1>
 
-<div class="page_content">
+<div data-role="page">
+<div data-role="header">
+    {% block heading %}{% endblock %}
+</div>
+
+{#<div class="page_content">#}
+<div data-role="content">
     {% block page_content %}{% endblock %}
+</div>
+<div data-role="footer">
+    {% block footer %}Maintained by: Jason C. and Graham H.{% endblock %}
+</div>
 </div>
 </body>
 </html>

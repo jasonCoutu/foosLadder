@@ -2,13 +2,11 @@
 
 {% block title %}VendAsta Foos Ladder{% endblock %}
 
+{% block heading %}VendAsta Foos Ladder{% endblock %}
 {% block page_content %}
-<div class="centered_header"><h1>VendAsta Foos Ladder</h1></div>
-<br>
-<br>
-<a href="{{ login }}">Sign In</a>
-<br>
-<a href="selector">Look Up a Player</a>
-<br>
-<a href="ladder">Current Ladder</a>
+    <div data-role="controlgroup">
+        <a href="/selector"><button>Look Up a Player</button></a>
+        <a href="/ladder"><button>Current Ladder</button></a>
+    </div>
+    <a href="{{ login }}"><button>Sign In</button></a>
 {% endblock %}

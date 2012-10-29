@@ -94,8 +94,8 @@ body {
 #Players {
   margin-left: auto;
   margin-right: auto;
-  width: 40%;
   border-collapse: collapse;
+  width: 60%;
 }
 
 /* line 30, ../scss/global.scss */

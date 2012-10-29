@@ -5,22 +5,27 @@
 {% block title %}Report a Game{% endblock %}
 {% block heading %}Report a Game{% endblock %}
 {% block page_content %}
-<form action="/ladder" method="POST">
+<form action="ladder" method="POST">
   <b>Players</b>
-    {{   playerSel(user, userKey, 'player1') }}
-    {{   playerSel(names, keys, 'player2') }}
-<br><br>
+    <div data-role="controlgroup">
+        {{   playerSel(user, userKey, 'player1') }}
+        {{   playerSel(names, keys, 'player2') }}
+    </div>
     <b>Game 1</b>
-    {{   playerScore('p1g1') }}
-    {{   playerScore('p2g1') }}
-<br>
+    <div data-role="controlgroup">
+        {{   playerScore('p1g1') }}
+        {{   playerScore('p2g1') }}
+    </div>
     <b>Game 2</b>
-    {{   playerScore('p1g2') }}
-    {{   playerScore('p2g2') }}
-<br>
+    <div data-role="controlgroup">
+        {{   playerScore('p1g2') }}
+        {{   playerScore('p2g2') }}
+    </div>
     <b>Game 3</b>
-    {{   playerScore('p1g3') }}
-    {{   playerScore('p2g3') }}
+    <div data-role="controlgroup">
+        {{   playerScore('p1g3') }}
+        {{   playerScore('p2g3') }}
+    </div>
 <br>
     <input type="submit" value="Submit Scores!" />
 </form>

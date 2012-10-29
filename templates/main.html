@@ -2,15 +2,14 @@
 {% block title %}VendAsta Foos Ladder{% endblock %}
 
 {% block page_content %}
-    <h1 class="centered_header">VendAsta Foos Ladder</h1>
-    {% if name != None %}
-        <div>Welcome, {{ name }}</div>
-    {% endif %}
-    <a href="{{ logout }}">Sign out</a>
-    <br>
-    <a href="selector">Look Up a Player</a>
-    <br>
-    <a href="ladder">Current Ladder</a>
-    <br>
-    <a href="/recordGame">Record a Game</a>
+    {% block heading %}VendAsta Foos Ladder{% endblock %}
+
+    <div>Welcome, {{ name }}</div>
+
+    <div data-role="controlgroup">
+        <a href="/selector"><button>Look Up a Player</button></a>
+        <a href="/ladder"><button>Current Ladder</button></a>
+        <a href="/recordGame"><button>Record a Game</button></a>
+    </div>
+    <a href="{{ logout }}"><button>Sign out</button></a>
 {% endblock %}
