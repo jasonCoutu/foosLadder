@@ -1,5 +1,9 @@
 __author__ = 'VendAsta'
 
+from google.appengine.ext import ndb
+
+import utils
+
 from views import TemplatedView
 from models import PlayerModel, GameModel, MatchModel, skillBase_names
 
@@ -20,7 +24,6 @@ class ladderView(TemplatedView):
                 pb = bp*pd/10
                 ws = ws + bp + pb
                 ls = ls - bp - pb
-
         """
         game1 = GameModel()
         game1.player1 = int(self.request.POST['p1g1'])
@@ -34,12 +37,12 @@ class ladderView(TemplatedView):
         a = MatchModel()
         a.player1 = self.request.POST['player1']
         a.player2 = self.request.POST['player2']
-        a.scores = [game1, game2, game3 ]
+        a.scores = [game1, game2, game3]
         players = ndb.get_multi([ndb.Key(PlayerModel, a.player1), ndb.Key(PlayerModel, a.player2)])
         p1_total = game1.player1 + game2.player1 + game3.player1
         p2_total = game1.player2 + game2.player2 + game3.player2
 
-        point_dff =  p1_total - p2_total
+#        point_dff =  p1_total - p2_total
         #print point_dff
 
         if p1_total > p2_total:
@@ -48,10 +51,15 @@ class ladderView(TemplatedView):
         else:
             winner = players[1]
             loser = players[0]
-            point_dff = point_dff * -1
+#            point_dff = point_dff * -1
+
+        winnerRank, loserRank  = utils.calculate_elo_rank(winner.skillScore, loser.skillScore, winner)
+
+        winner.skillScore = int(winnerRank)
+        loser.skillScore = int(loserRank)
 
         basePoints = int((loser.skillScore - winner.skillScore) * 0.3)
-        #print basePoints
+#        #print basePoints
         if basePoints < -100 :
             basePoints = 5
         elif basePoints < -20:
@@ -62,10 +70,11 @@ class ladderView(TemplatedView):
         a.baseValue = basePoints
         a.put()
 
-        bonusPoints = int((basePoints*point_dff)/10)
+#       Not needed with ELO calculations from utils.py
+#        bonusPoints = int((basePoints*point_dff)/10)
 
-        winner.skillScore = winner.skillScore + basePoints + bonusPoints
-        loser.skillScore = loser.skillScore - basePoints - bonusPoints
+#        winner.skillScore = winner.skillScore + basePoints + bonusPoints
+#        loser.skillScore = loser.skillScore - basePoints - bonusPoints
         winner.gamesWon += 1
         winner.gamesPlayed += 1
         loser.gamesPlayed += 1

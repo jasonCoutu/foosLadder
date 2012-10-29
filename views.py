@@ -123,7 +123,6 @@ class mainView(TemplatedView):
             if a:
                 # Do the ladder stuff here
                 import datetime
-                keys = []
                 a=PlayerModel.query()
                 a=a.order(-PlayerModel.skillScore)
                 b=PlayerModel.query()
