@@ -51,7 +51,19 @@ class newPlayerView(TemplatedView):
 
     def get(self):
         user=users.get_current_user()
-        self.render_response('main.html', logout=users.create_logout_url("/"), name=user.nickname())
+        key = ndb.Key(PlayerModel, user.email() )
+        a = key.get()
+        # Kind of sloppy to do this here but whatever I say!
+        import datetime
+        keys = []
+        a=PlayerModel.query()
+        a=a.order(-PlayerModel.skillScore)
+        b=PlayerModel.query()
+        lastweek = datetime.datetime.now() - datetime.timedelta(days=7)
+        b=b.filter(PlayerModel.lastGame > lastweek)
+        self.render_response('main.html', players=[i for i in a.iter()],
+            numplayers=a.count(), active=b.count(),
+            logout=users.create_logout_url("/"), name=user.nickname())
         #player = users.get_current_user()
         #table = []
         #for i,j in skillBase_names.iteritems():
@@ -109,7 +121,17 @@ class mainView(TemplatedView):
             #a = PlayerModel(key=key)
             a = key.get()
             if a:
-                self.render_response('main.html', logout=users.create_logout_url("/"), name=user.nickname())
+                # Do the ladder stuff here
+                import datetime
+                keys = []
+                a=PlayerModel.query()
+                a=a.order(-PlayerModel.skillScore)
+                b=PlayerModel.query()
+                lastweek = datetime.datetime.now() - datetime.timedelta(days=7)
+                b=b.filter(PlayerModel.lastGame > lastweek)
+                self.render_response('main.html', players=[i for i in a.iter()],
+                    numplayers=a.count(), active=b.count(),
+                    logout=users.create_logout_url("/"), name=user.nickname())
             else:
                 table = []
                 for i,j in skillBase_names.iteritems():
