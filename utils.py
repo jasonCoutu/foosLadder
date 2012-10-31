@@ -1,5 +1,7 @@
 import math
 
+from models import PlayerModel
+
 PLAYER_A = 1
 PLAYER_B = 2
 
@@ -28,3 +30,13 @@ def calculate_elo_rank(player_a_rank=1600, player_b_rank=1600, winner=PLAYER_A, 
     if winner is PLAYER_A:
         return (new_winner_rank, new_loser_rank)
     return (new_loser_rank, new_winner_rank)
+
+def get_ladder():
+    import datetime
+    a=PlayerModel.query()
+    a=a.order(-PlayerModel.skillScore)
+    b=PlayerModel.query()
+    lastweek = datetime.datetime.now() - datetime.timedelta(days=7)
+    b=b.filter(PlayerModel.lastGame > lastweek)
+
+    return (a, b)

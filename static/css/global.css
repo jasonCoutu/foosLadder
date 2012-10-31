@@ -91,23 +91,21 @@ body {
 }
 
 /* line 23, ../scss/global.scss */
-#Players {
+.Players {
   margin-left: auto;
   margin-right: auto;
   border-collapse: collapse;
   width: 60%;
 }
-
-/* line 30, ../scss/global.scss */
-#Players td, #Players th {
+/* line 28, ../scss/global.scss */
+.Players td, .Players th {
   font-size: 1em;
   text-align: center;
   border: 1px solid #c6c9ac;
   padding: 3px 7px 2px 7px;
 }
-
-/* line 37, ../scss/global.scss */
-#Players th {
+/* line 34, ../scss/global.scss */
+.Players th {
   font-size: 1.1em;
   text-align: center;
   padding-top: 5px;
@@ -115,25 +113,24 @@ body {
   background-color: #c6c9ac;
   color: #ffffff;
 }
-
-/* line 46, ../scss/global.scss */
-#Players tr.alt td {
+/* line 42, ../scss/global.scss */
+.Players tr.alt td {
   color: #000000;
   background-color: #d4d7ba;
 }
 
-/* line 51, ../scss/global.scss */
+/* line 48, ../scss/global.scss */
 div.centered2 {
   text-align: center;
 }
 
-/* line 55, ../scss/global.scss */
+/* line 52, ../scss/global.scss */
 div.centered2 table {
   margin: 0 auto;
   text-align: left;
 }
 
-/* line 60, ../scss/global.scss */
+/* line 57, ../scss/global.scss */
 div.centered-max-width {
   text-align: center;
   padding: 5px;

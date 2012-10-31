@@ -1,19 +1,72 @@
 
 {% macro playerSel(names, keys, name='selector') -%}
-<select name={{ name }}>
+<select id={{ name }} name={{ name }}>
     {% for key in keys %}
-        <option value="{{ key }}">  {{names[loop.index0]}}
+        {# Trying to have it NOT print your name in the opponents box, #}
+        {# since that doesn't really make sense #}
+{#        {{ key }} {{ userKey }}#}
+{#        {% if key != userKey %}#}
+        {% if keys|count() == 1 %}
+            <option selected="selected" value="{{ key }}">{{names[loop.index0]}}</option>
+        {% else %}
+            <option value="{{ key }}">{{names[loop.index0]}}</option>
+        {% endif %}
+    {% endfor %}
+
+</select>
+{%- endmacro %}
+
+{% macro rankingsSel(names, keyVals, name='selector') -%}
+<select id={{ name }} name={{ name }}>
+    {% set sortedKeys = keyVals|sort() %}
+    {% for key in sortedKeys %}
+        <option value="{{ key[1] }}">{{sortedKeys[loop.index0][1]}} - {{ sortedKeys[loop.index0][0] }}</option>
     {% endfor %}
 
 </select>
 {%- endmacro %}
 
 {% macro playerScore( name='p1g1') -%}
-<select name={{ name }}>
+<select name={{ name }} id={{ name }}>
     {% for key in '012345'%}
-        <option value="{{ key }}">  {{key}}
+        <option value="{{ key }}">{{key}}</option>
     {% endfor %}
 
 </select>
 {%- endmacro %}
 
+{% macro printGames() -%}
+    <b>Game 1</b>
+    <div data-role="controlgroup">
+        {{   playerScore('p1g1') }}
+        {{   playerScore('p2g1') }}
+    </div>
+    <b>Game 2</b>
+    <div data-role="controlgroup">
+        {{   playerScore('p1g2') }}
+        {{   playerScore('p2g2') }}
+    </div>
+    <b>Game 3</b>
+    <div data-role="controlgroup">
+        {{   playerScore('p1g3') }}
+        {{   playerScore('p2g3') }}
+    </div>
+{%- endmacro %}
+
+{% macro printGamesSlider(player1, player2) -%}
+    <label for="game1">Game 1</label>
+    <select data-role="slider" id="game1">
+        <option class="player1" value="player1" selected="selected">Player 1</option>
+        <option class="player2" value="player2">Player 2</option>
+    </select>
+    <label for="game2">Game 2</label>
+    <select data-role="slider" id="game2">
+        <option class="player1" value="player1" selected="selected">Player 1</option>
+        <option class="player2" value="player2">Player 2</option>
+    </select>
+    <label for="game3">Game 3</label>
+    <select data-role="slider" id="game3">
+        <option class="player1" value="player1" selected="selected">Player 1</option>
+        <option class="player2" value="player2">Player 2</option>
+    </select>
+{%- endmacro %}

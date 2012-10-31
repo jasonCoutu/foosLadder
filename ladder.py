@@ -3,6 +3,7 @@ __author__ = 'VendAsta'
 from google.appengine.ext import ndb
 
 import utils
+import logging
 
 from views import TemplatedView
 from models import PlayerModel, GameModel, MatchModel, skillBase_names
@@ -26,14 +27,40 @@ class ladderView(TemplatedView):
                 ls = ls - bp - pb
         """
         game1 = GameModel()
-        game1.player1 = int(self.request.POST['p1g1'])
-        game1.player2 = int(self.request.POST['p2g1'])
         game2 = GameModel()
-        game2.player1 = int(self.request.POST['p1g2'])
-        game2.player2 = int(self.request.POST['p2g2'])
         game3 = GameModel()
-        game3.player1 = int(self.request.POST['p1g3'])
-        game3.player2 = int(self.request.POST['p2g3'])
+        if "game1" in self.request.POST.keys():
+            winners = [self.request.POST['game1'],
+                       self.request.POST['game2'],
+                       self.request.POST['game3']]
+            if winners[0] == "player1":
+                game1.player1 = 5
+                game1.player2 = 0
+            else:
+                game1.player2 = 5
+                game1.player1 = 0
+            if winners[1] == "player1":
+                game2.player1 = 5
+                game2.player2 = 0
+            else:
+                game2.player2 = 5
+                game2.player1 = 0
+            if winners[2] == "player1":
+                game3.player1 = 5
+                game3.player2 = 0
+            else:
+                game3.player2 = 5
+                game3.player1 = 0
+        else:
+            game1.player1 = int(self.request.POST['p1g1'])
+            game1.player2 = int(self.request.POST['p2g1'])
+
+            game2.player1 = int(self.request.POST['p1g2'])
+            game2.player2 = int(self.request.POST['p2g2'])
+
+            game3.player1 = int(self.request.POST['p1g3'])
+            game3.player2 = int(self.request.POST['p2g3'])
+
         a = MatchModel()
         a.player1 = self.request.POST['player1']
         a.player2 = self.request.POST['player2']
@@ -42,8 +69,8 @@ class ladderView(TemplatedView):
         p1_total = game1.player1 + game2.player1 + game3.player1
         p2_total = game1.player2 + game2.player2 + game3.player2
 
-#        point_dff =  p1_total - p2_total
-        #print point_dff
+    #        point_dff =  p1_total - p2_total
+            #print point_dff
 
         if p1_total > p2_total:
             winner = players[0]
@@ -53,7 +80,8 @@ class ladderView(TemplatedView):
             loser = players[0]
 #            point_dff = point_dff * -1
 
-        winnerRank, loserRank  = utils.calculate_elo_rank(winner.skillScore, loser.skillScore, winner)
+        winnerRank, loserRank  = utils.calculate_elo_rank(winner.skillScore,
+                                                          loser.skillScore)
 
         winner.skillScore = int(winnerRank)
         loser.skillScore = int(loserRank)
@@ -81,18 +109,12 @@ class ladderView(TemplatedView):
         winner.put()
         loser.put()
 
-        #print self.request.POST
         self.get()
 
 
     def get(self):
-        import datetime
-        keys = []
-        a=PlayerModel.query()
-        a=a.order(-PlayerModel.skillScore)
-        b=PlayerModel.query()
-        lastweek = datetime.datetime.now() - datetime.timedelta(days=7)
-
-        b=b.filter(PlayerModel.lastGame > lastweek)
-        self.render_response('ladder.html', players=[i for i in a.iter()] ,numplayers=a.count(), active=b.count())
+        players_total, actives = utils.get_ladder()
+        self.render_response('ladder.html',
+            players=[i for i in players_total.iter()],
+            numplayers=players_total.count(), active=actives.count())
 

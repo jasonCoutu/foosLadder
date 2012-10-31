@@ -1,34 +1,59 @@
 {% extends "base.html" %}
 {% from 'macros.html' import playerSel %}
 {% from 'macros.html' import playerScore %}
+{% from 'macros.html' import printGames %}
+{% from 'macros.html' import printGamesSlider %}
 
 {% block title %}Report a Game{% endblock %}
+{% block styling_or_scripts %}
+    <style type="text/css">
+        .containing-element .ui-slider-switch { width: 50% }
+    </style>
+{% endblock %}
 {% block heading %}Report a Game{% endblock %}
 {% block page_content %}
+    <div class="centered2">
 <form action="ladder" method="POST">
   <b>Players</b>
-    <div data-role="controlgroup">
+    <div data-role="controlgroup" class="players">
         {{   playerSel(user, userKey, 'player1') }}
         {{   playerSel(names, keys, 'player2') }}
     </div>
-    <b>Game 1</b>
-    <div data-role="controlgroup">
-        {{   playerScore('p1g1') }}
-        {{   playerScore('p2g1') }}
-    </div>
-    <b>Game 2</b>
-    <div data-role="controlgroup">
-        {{   playerScore('p1g2') }}
-        {{   playerScore('p2g2') }}
-    </div>
-    <b>Game 3</b>
-    <div data-role="controlgroup">
-        {{   playerScore('p1g3') }}
-        {{   playerScore('p2g3') }}
-    </div>
+    {{ printGames() }}
 <br>
     <input type="submit" value="Submit Scores!" />
 </form>
-
+    </div>
 <p><a href="/"><button>Back to main</button></a></p>
+{% endblock %}
+{% block body_scripts %}
+{#    <script type="text/javascript">#}
+        {# Eventually it'd be nice to think about using this #}
+{#    $(document).bind('pageinit', function(){#}
+{##}
+{#        $("select[name='player1']").change(function() {#}
+{#            var player1 = $(this).children(':selected').text();#}
+{#            console.debug(player1);#}
+{#            $(".player1").each(function(){#}
+{#                $(this).text(player1);#}
+{#                $(this).parent().page();#}
+{##}
+{#            });#}
+{#        });#}
+{##}
+{#        $("select[name='player2']").change(function(){#}
+{#            var player2 = $(this).children(':selected').text();#}
+{#            console.debug(player2);#}
+{#            $(".player2").each(function(){#}
+{#                $(this).text(player2).trigger("create");#}
+{#                $(this).parent().page();#}
+{##}
+{#            });#}
+{#        });#}
+{##}
+{#        $("select[name='player1']").change();#}
+{#        $("select[name='player2']").change();#}
+{##}
+{#    });#}
+{#    </script>#}
 {% endblock %}

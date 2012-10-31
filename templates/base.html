@@ -8,25 +8,25 @@
     <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
     <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    {% block styling %}{% endblock %}
+    {% block styling_or_scripts %}{% endblock %}
 </head>
 <body>
-
 <div data-role="page">
-<div data-role="header" class="centered-max-width">
-    {% block heading %}<img src="/static/images/foosladder.png"
-                            alt="Vendasta Foos Ladder"
-                            title="Vendasta Foos Ladder"
-                            style="max-width: 100%;"/>{% endblock %}
-</div>
+    <div data-role="header" class="centered-max-width">
+        {% block heading %}<img src="/static/images/foosladder.png"
+                                alt="Vendasta Foos Ladder"
+                                title="Vendasta Foos Ladder"
+                                style="max-width: 100%;"/>{% endblock %}
+    </div>
 
-{#<div class="page_content">#}
-<div data-role="content">
-    {% block page_content %}{% endblock %}
-</div>
-<div data-role="footer">
-    {% block footer %}Maintained by: Jason C. and Graham H.{% endblock %}
-</div>
+    {#<div class="page_content">#}
+    <div data-role="content">
+        {% block page_content %}{% endblock %}
+    </div>
+    <div data-role="footer">
+        {% block footer %}Maintained by: Jason C. and Graham H.{% endblock %}
+    </div>
+    {% block body_scripts %}{% endblock %}
 </div>
 </body>
 </html>
