@@ -1,26 +1,42 @@
 {% extends "base.html" %}
 {% from 'macros.html' import playerSel %}
+{% from 'macros.html' import rankingsSel %}
 
 {% block title %}New Player Entry{% endblock %}
 
 {% block heading %}New Player Entry Form{% endblock %}
 {% block page_content %}
 <form title="newPlayer" action="/newPlayer" method="POST">
-    First Name   :<input name="fname" value=""/><br>
-    Last Name    :<input name="lname"/><br>
-    Skill:{{   playerSel(keys, names, 'skillBaseVal') }}
-
-
-    </select><br>
-    db key       :<input name="key" value="{{ playerKey }}" readonly="True"/><br>
-    <input type="submit" value="Submit"/>
+    <label for="fname" class="ui-hidden-accessible">First Name:</label><input name="fname" id="fname" required placeholder="First name" />
+    <label for="lname" class="ui-hidden-accessible">Last Name:</label><input name="lname" id="lname" required placeholder="Last name" />
+    <input type="hidden" name="key" value="{{ playerKey }}" readonly="True"/>
+    <fieldset data-role="field-contain">
+        Skill - Points:{{ rankingsSel(keys, keyVals, 'skillBaseVal') }}
+        If you aren't sure where you should be as far as points go, keep in mind
+        that in general, 1000 is considered a bright beginner. You can also take a
+        look at the current ladder and see where you fit in.
+    </fieldset>
+<div class="centered2">
+    <table class="Players">
+        <tr>
+            <th>Name</th>
+            <th>SkillScore</th>
+        </tr>
+        {% set odd=True %}
+        {%  for player in players %}
+            {% if odd %}
+                <tr>
+                {% set odd=False %}
+            {% else %}
+                <tr class="alt">
+                {% set odd=True %}
+            {% endif %}
+        <td>{{ player.first_name}} {{player.last_name}}</td>
+        <td> {{player.skillScore}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+    <input data-icon="check" type="submit" value="Submit"/>
 </form>
-
-Value to Skill comparison table:
-<table id="Players">
-    <tr><th>Name</th><th>Value</th></tr>
-    {% for value in table %}
-        <tr><td>{{ value[1] }}</td><td>{{ value[0] }}</td></tr>
-    {% endfor %}
-</table>
 {% endblock %}

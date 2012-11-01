@@ -20,32 +20,29 @@ body {
 }
 
 // Styling the ladder in /ladder
-#Players {
+.Players {
   margin-left: auto;
   margin-right: auto;
   border-collapse:collapse;
   width: 60%;
-}
-
-#Players td, #Players th {
-  font-size:1em;
-  text-align:center;
-  border:1px solid #c6c9ac;
-  padding:3px 7px 2px 7px;
-}
-
-#Players th {
-  font-size:1.1em;
-  text-align:center;
-  padding-top:5px;
-  padding-bottom:4px;
-  background-color: #c6c9ac;
-  color:#ffffff;
-}
-
-#Players tr.alt td {
-  color:#000000;
-  background-color: #d4d7ba;
+  td, th {
+    font-size:1em;
+    text-align:center;
+    border:1px solid #c6c9ac;
+    padding:3px 7px 2px 7px;
+  }
+  th {
+    font-size:1.1em;
+    text-align:center;
+    padding-top:5px;
+    padding-bottom:4px;
+    background-color: #c6c9ac;
+    color:#ffffff;
+  }
+  tr.alt td {
+      color:#000000;
+      background-color: #d4d7ba;
+  }
 }
 
 div.centered2 {
@@ -55,4 +52,10 @@ div.centered2 {
 div.centered2 table {
   margin: 0 auto;
   text-align: left;
+}
+
+div.centered-max-width {
+  text-align: center;
+  padding: 5px;
+  max-width: auto;
 }

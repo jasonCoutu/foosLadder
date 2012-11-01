@@ -2,14 +2,37 @@
 {% block title %}VendAsta Foos Ladder{% endblock %}
 
 {% block page_content %}
-    {% block heading %}VendAsta Foos Ladder{% endblock %}
-
-    <div>Welcome, {{ name }}</div>
+    <div class="centered2">Welcome, {{ name }}</div>
 
     <div data-role="controlgroup">
         <a href="/selector"><button>Look Up a Player</button></a>
-        <a href="/ladder"><button>Current Ladder</button></a>
+        {# Pretty sure this isn't necessary anymore, but leaving it for now #}
+        {#<a href="/ladder"><button>Current Ladder</button></a>#}
         <a href="/recordGame"><button>Record a Game</button></a>
+    </div>
+    <div class="centered2"><p>There are currently {{ numplayers }} players in the ladder, {{ active }}
+        have been active in the past month.</p></div>
+    <div class="centered2">
+        <table class="Players">
+
+            <tr>
+                <th>Name</th>
+                <th>SkillScore</th>
+            </tr>
+            {% set odd=True %}
+            {%  for player in players %}
+                {% if odd %}
+                    <tr>
+                        {% set odd=False %}
+                        {% else %}
+                    <tr class="alt">
+                    {% set odd=True %}
+                {% endif %}
+            <td>{{ player.first_name}} {{player.last_name}}</td>
+            <td> {{player.skillScore}}</td>
+            </tr>
+            {% endfor %}
+        </table>
     </div>
     <a href="{{ logout }}"><button>Sign out</button></a>
 {% endblock %}

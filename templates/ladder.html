@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %}Current Ladder</title>{% endblock %}
+{% block title %}Current Ladder{% endblock %}
 
 {% block heading %}Ladder{% endblock %}
 {% block page_content %}
-<p>There are currently {{ numplayers }} Players in the ladder, {{ active }} have been active in the past month.</p>
+    <div class="centered2"><p>There are currently {{ numplayers }} players in the ladder, {{ active }}
+        have been active in the past month.</p></div>
 
 <div class="centered2">
-<table id="Players">
+<table class="Players">
 
   <tr>
       <th>Name</th>
@@ -22,8 +23,8 @@
         <tr class="alt">
         {% set odd=True %}
     {% endif %}
-            <td>{{ player.first_name}} {{player.last_name}}</td>
-            <td> {{player.skillScore}}</td>
+            <td>{{ player.first_name }} {{ player.last_name }}</td>
+            <td>{{ player.skillScore }}</td>
         </tr>
 {% endfor %}
 </table>

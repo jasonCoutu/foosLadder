@@ -4,6 +4,7 @@ from webapp2 import RequestHandler, cached_property
 from webapp2_extras import jinja2
 from models import PlayerModel, GameModel, MatchModel, skillBase_names
 import logging
+import utils
 
 class TemplatedView(RequestHandler):
     
@@ -51,7 +52,13 @@ class newPlayerView(TemplatedView):
 
     def get(self):
         user=users.get_current_user()
-        self.render_response('main.html', logout=users.create_logout_url("/"), name=user.nickname())
+        key = ndb.Key(PlayerModel, user.email() )
+        a = key.get()
+        if a:
+            a, b = utils.get_ladder()
+            self.render_response('main.html', players=[i for i in a.iter()],
+                numplayers=a.count(), active=b.count(),
+                logout=users.create_logout_url("/"), name=user.nickname())
         #player = users.get_current_user()
         #table = []
         #for i,j in skillBase_names.iteritems():
@@ -69,6 +76,8 @@ class newPlayerView(TemplatedView):
         sscore=0
         if "key" in self.request.POST.keys():
             key= self.request.POST["key"]
+        elif "skillBaseVal" in self.request.POST.keys():
+            key= self.request.POST["skillBaseVal"]
         else:
             return None
         if "fname" in self.request.POST.keys():
@@ -109,12 +118,22 @@ class mainView(TemplatedView):
             #a = PlayerModel(key=key)
             a = key.get()
             if a:
-                self.render_response('main.html', logout=users.create_logout_url("/"), name=user.nickname())
+                a, b = utils.get_ladder()
+                self.render_response('main.html', players=[i for i in a.iter()],
+                    numplayers=a.count(), active=b.count(),
+                    logout=users.create_logout_url("/"), name=user.nickname())
             else:
                 table = []
                 for i,j in skillBase_names.iteritems():
                     table.append([j,i])
-                table.sort()
-                self.render_response('newPlayer.html', table=table, names=skillBase_names.keys() , keys=skillBase_names.keys(), nick=user.nickname(), playerKey=user.email())
+                sorted(table, key=lambda tables: tables[0], reverse=True)
+                a, b = utils.get_ladder()
+
+                self.render_response('newPlayer.html',
+                    names=skillBase_names.keys() , keys=skillBase_names.keys(),
+                    keyVals=table,
+                    nick=user.nickname(), playerKey=user.email(),
+                    players=[i for i in a.iter()],
+                    numplayers=a.count(), active=b.count())
         else:
             self.render_response('main2.html', login=users.create_login_url('/'))
