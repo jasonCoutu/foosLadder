@@ -75,10 +75,15 @@ class ladderView(TemplatedView):
         if p1_total > p2_total:
             winner = players[0]
             loser = players[1]
-        else:
+        elif p2_total > p1_total:
             winner = players[1]
             loser = players[0]
 #            point_dff = point_dff * -1
+        else:
+            #No winner or loser, don't adjust the rankings at all
+            self.get()
+            return
+
 
         winnerRank, loserRank  = utils.calculate_elo_rank(winner.skillScore,
                                                           loser.skillScore)
