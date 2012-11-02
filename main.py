@@ -3,7 +3,7 @@ from webapp2 import WSGIApplication, Route
 
 ROUTES = [
     Route('/', handler='views.mainView'),
-    Route('/page2', handler='views.playerView'),
+    Route('/player', handler='views.playerView'),
     Route('/newPlayer', handler='views.newPlayerView'),
     Route('/selector', handler='views.selectorView'),
     Route('/ladder', handler='ladder.ladderView'),

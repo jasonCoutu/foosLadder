@@ -5,9 +5,11 @@
 
 {% block heading %}Player Lookup{% endblock %}
 {% block page_content %}
-    Name:{{name}} {{last}}<br />
-    Skill Score: {{skill}}<br />
-    Games (w/l): {{wins}}/{{loses}}<br /><br />
+    <div class="centered2">
+    <h1>{{name}} {{last}}</h1>
+    <p>Skill Score: {{skill}}<br />
+    Games (w/l): {{wins}}/{{loses}}</p><br />
+    </div>
     <a href="selector"><button>Look up another player</button></a>
     <a href="/"><button>Back to main</button></a>
 {% endblock %}

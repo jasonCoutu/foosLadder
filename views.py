@@ -41,7 +41,12 @@ class reportView(TemplatedView):
 
 
 class playerView(TemplatedView):
-    
+
+    def get(self):
+        a = PlayerModel.query()
+        name_list = dict([(i.key.id(), "%s %s" % (i.first_name, i.last_name) ) for i in a.iter()])
+        self.render_response("selector.html", names=name_list.values(), keys=name_list.keys())
+
     def post(self):
         key=ndb.Key(PlayerModel, self.request.POST['selector'])
         a = key.get()

@@ -8,12 +8,11 @@ import logging
 from views import TemplatedView
 from models import PlayerModel, GameModel, MatchModel, skillBase_names
 
-
 class ladderView(TemplatedView):
 
     def post(self):
         """
-            formula for scoreing:
+            formula for scoring:
                 Winner's skill  (ws)
                 Loser's skill   (ls)
                 Base points     (bp)
@@ -26,48 +25,14 @@ class ladderView(TemplatedView):
                 ws = ws + bp + pb
                 ls = ls - bp - pb
         """
-        game1 = GameModel()
-        game2 = GameModel()
-        game3 = GameModel()
-        if "game1" in self.request.POST.keys():
-            winners = [self.request.POST['game1'],
-                       self.request.POST['game2'],
-                       self.request.POST['game3']]
-            if winners[0] == "player1":
-                game1.player1 = 5
-                game1.player2 = 0
-            else:
-                game1.player2 = 5
-                game1.player1 = 0
-            if winners[1] == "player1":
-                game2.player1 = 5
-                game2.player2 = 0
-            else:
-                game2.player2 = 5
-                game2.player1 = 0
-            if winners[2] == "player1":
-                game3.player1 = 5
-                game3.player2 = 0
-            else:
-                game3.player2 = 5
-                game3.player1 = 0
-        else:
-            game1.player1 = int(self.request.POST['p1g1'])
-            game1.player2 = int(self.request.POST['p2g1'])
-
-            game2.player1 = int(self.request.POST['p1g2'])
-            game2.player2 = int(self.request.POST['p2g2'])
-
-            game3.player1 = int(self.request.POST['p1g3'])
-            game3.player2 = int(self.request.POST['p2g3'])
 
         a = MatchModel()
         a.player1 = self.request.POST['player1']
         a.player2 = self.request.POST['player2']
-        a.scores = [game1, game2, game3]
+        a.scores = utils.calculate_score_from_post(self.request)
         players = ndb.get_multi([ndb.Key(PlayerModel, a.player1), ndb.Key(PlayerModel, a.player2)])
-        p1_total = game1.player1 + game2.player1 + game3.player1
-        p2_total = game1.player2 + game2.player2 + game3.player2
+        p1_total = a.scores[0].player1 + a.scores[1].player1 + a.scores[2].player1
+        p2_total = a.scores[0].player2 + a.scores[1].player2 + a.scores[2].player2
 
     #        point_dff =  p1_total - p2_total
             #print point_dff

@@ -1,6 +1,6 @@
 import math
 
-from models import PlayerModel
+from models import PlayerModel, GameModel
 
 PLAYER_A = 1
 PLAYER_B = 2
@@ -40,3 +40,41 @@ def get_ladder():
     b=b.filter(PlayerModel.lastGame > lastweek)
 
     return (a, b)
+
+def calculate_score_from_post(request):
+    game1 = GameModel()
+    game2 = GameModel()
+    game3 = GameModel()
+    if "game1" in request.POST.keys():
+        winners = [request.POST['game1'],
+                   request.POST['game2'],
+                   request.POST['game3']]
+        if winners[0] == "player1":
+            game1.player1 = 5
+            game1.player2 = 0
+        else:
+            game1.player2 = 5
+            game1.player1 = 0
+        if winners[1] == "player1":
+            game2.player1 = 5
+            game2.player2 = 0
+        else:
+            game2.player2 = 5
+            game2.player1 = 0
+        if winners[2] == "player1":
+            game3.player1 = 5
+            game3.player2 = 0
+        else:
+            game3.player2 = 5
+            game3.player1 = 0
+    else:
+        game1.player1 = int(request.POST['p1g1'])
+        game1.player2 = int(request.POST['p2g1'])
+
+        game2.player1 = int(request.POST['p1g2'])
+        game2.player2 = int(request.POST['p2g2'])
+
+        game3.player1 = int(request.POST['p1g3'])
+        game3.player2 = int(request.POST['p2g3'])
+
+    return [game1, game2, game3]
