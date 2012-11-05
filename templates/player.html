@@ -7,8 +7,12 @@
 {% block page_content %}
     <div class="centered2">
     <h1>{{name}} {{last}}</h1>
-    <p>Skill Score: {{skill}}<br />
-    Games (w/l): {{wins}}/{{loses}}</p><br />
+    <p>
+        Skill Score: {{ skill }}<br>
+        Games played: {{ games }}<br>
+        Wins/Losses: {{ wins }}/{{ losses }}<br>
+        Win Percentage: {{ win_ratio }}%
+    </p><br>
     </div>
     <a href="selector"><button>Look up another player</button></a>
     <a href="/"><button>Back to main</button></a>

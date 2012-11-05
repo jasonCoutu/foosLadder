@@ -1,5 +1,5 @@
 import os
-from webapp2 import WSGIApplication, Route
+from webapp2 import WSGIApplication, Route, SimpleRoute
 
 ROUTES = [
     Route('/',              handler='views.mainView'),
@@ -9,7 +9,8 @@ ROUTES = [
     Route('/ladder',        handler='ladder.ladderView'),
     Route('/recordGame',    handler='views.reportView'),
     Route('/reportGame',    handler='views.reportView'),
-    Route('/<error>',       handler='views.errorHandler'),
+    Route('/settings',      handler='views.settingsView'),
+    SimpleRoute('/.+',      handler='views.errorHandler'),
     ]
 
 ROUTES2 = [

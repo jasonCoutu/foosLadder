@@ -52,7 +52,9 @@ class playerView(TemplatedView):
     def post(self):
         key=ndb.Key(PlayerModel, self.request.POST['selector'])
         a = key.get()
-        self.render_response('player.html', name=a.first_name, last=a.last_name,skill=a.skillScore, wins=a.gamesWon, loses=(a.gamesPlayed - a.gamesWon) )
+        name, last, skill, wins, losses, games, win_ratio = utils.calc_player_info(a)
+        self.render_response('player.html', name=name, last=last, skill=skill,
+            wins=wins, losses=losses, games=games, win_ratio=win_ratio)
 
 
 class newPlayerView(TemplatedView):
@@ -145,7 +147,36 @@ class mainView(TemplatedView):
         else:
             self.render_response('main2.html', login=users.create_login_url('/'))
 
+
 class errorHandler(TemplatedView):
 
-    def get(self, error):
-        self.render_response("error.html", error_message=error)
+    def get(self):
+        path = self.request.path_qs[1:]
+        self.render_response("error.html", error_message=path)
+
+
+class settingsView(TemplatedView):
+
+    def get(self):
+        user = users.get_current_user()
+        if user != None:
+            key = ndb.Key(PlayerModel, user.email() )
+            a = key.get()
+            self.render_response("settings.html", user = a)
+        else:
+            self.render_response("error.html", error_message=user)
+
+    def post(self):
+        if "key" in self.request.POST.keys():
+            key= self.request.POST["key"]
+            keys = [ndb.Key(PlayerModel, key )]
+            user = PlayerModel(key=keys[0])
+
+            fname = self.request.POST["fname"]
+            lname = self.request.POST["lname"]
+            user.first_name = fname
+            user.last_name = lname
+
+            user.put()
+
+            self.render_response("settings.html", form_success="true")

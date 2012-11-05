@@ -6,9 +6,9 @@
 
 {% block title %}Report a Game{% endblock %}
 {% block styling_or_scripts %}
-    <style type="text/css">
-        .containing-element .ui-slider-switch { width: 50% }
-    </style>
+{#    <style type="text/css">#}
+{#        .containing-element .ui-slider-switch { width: 50% }#}
+{#    </style>#}
 {% endblock %}
 {% block heading %}Report a Game{% endblock %}
 {% block page_content %}
@@ -19,7 +19,7 @@
         {{   playerSel(user, userKey, 'player1') }}
         {{   playerSel(names, keys, 'player2') }}
     </div>
-    {{ printGamesSlider() }}
+    {{ printGames() }}
 <br>
     <input type="submit" value="Submit Scores!" />
 </form>
@@ -27,33 +27,33 @@
 <p><a href="/"><button>Back to main</button></a></p>
 {% endblock %}
 {% block body_scripts %}
-    <script type="text/javascript">
-{#        Eventually it'd be nice to think about using this#}
-    $(document).bind('pageinit', function(){
-
-        $("select[name='player1']").change(function() {
-            var player1 = $(this).children(':selected').text();
-            console.debug(player1);
-            $(".player1").each(function(){
-                $(this).text(player1);
-                $(this).parent().page();
-
-            });
-        });
-
-        $("select[name='player2']").change(function(){
-            var player2 = $(this).children(':selected').text();
-            console.debug(player2);
-            $(".player2").each(function(){
-                $(this).text(player2).trigger("create");
-                $(this).parent().page();
-
-            });
-        });
-
-        $("select[name='player1']").change();
-        $("select[name='player2']").change();
-
-    });
-    </script>
+{#    <script type="text/javascript">#}
+{#        Eventually it'd be nice to think about using this #}
+{#    $(document).bind('pageinit', function(){#}
+{##}
+{#        $("select[name='player1']").change(function() {#}
+{#            var player1 = $(this).children(':selected').text();#}
+{#            console.debug(player1);#}
+{#            $(".player1").each(function(){#}
+{#                $(this).text(player1);#}
+{#                $(this).parent().page();#}
+{##}
+{#            });#}
+{#        });#}
+{##}
+{#        $("select[name='player2']").change(function(){#}
+{#            var player2 = $(this).children(':selected').text();#}
+{#            console.debug(player2);#}
+{#            $(".player2").each(function(){#}
+{#                $(this).text(player2).trigger("create");#}
+{#                $(this).parent().page();#}
+{##}
+{#            });#}
+{#        });#}
+{##}
+{#        $("select[name='player1']").change();#}
+{#        $("select[name='player2']").change();#}
+{##}
+{#    });#}
+{#    </script>#}
 {% endblock %}

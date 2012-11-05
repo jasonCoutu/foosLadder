@@ -27,6 +27,8 @@ def calculate_elo_rank(player_a_rank=1600, player_b_rank=1600, winner=PLAYER_A, 
         new_loser_rank = loser_rank
     if new_loser_rank < 1:
         new_loser_rank = 1
+    if new_loser_rank < 100:
+        new_loser_rank = 100
     if winner is PLAYER_A:
         return (new_winner_rank, new_loser_rank)
     return (new_loser_rank, new_winner_rank)
@@ -78,3 +80,15 @@ def calculate_score_from_post(request):
         game3.player2 = int(request.POST['p2g3'])
 
     return [game1, game2, game3]
+
+def calc_player_info(player):
+    """ Returns information for the player viewing page """
+    name = player.first_name
+    last = player.last_name
+    skill = player.skillScore
+    wins = player.gamesWon
+    games = player.gamesPlayed
+    losses = games - wins
+    win_ratio = round(((wins / (games * 1.0)) * 100), 2)
+    return name, last, skill, wins, losses, games, win_ratio
+    #name=a.first_name, last=a.last_name,skill=a.skillScore, wins=a.gamesWon, loses=(a.gamesPlayed - a.gamesWon)
