@@ -2,22 +2,19 @@ import os
 from webapp2 import WSGIApplication, Route
 
 ROUTES = [
-    Route('/', handler='views.mainView'),
-    Route('/player', handler='views.playerView'),
-    Route('/newPlayer', handler='views.newPlayerView'),
-    Route('/selector', handler='views.selectorView'),
-    Route('/ladder', handler='ladder.ladderView'),
-    Route('/recordGame', handler='views.reportView'),
-    Route('/reportGame', handler='views.reportView'),
-
+    Route('/',              handler='views.mainView'),
+    Route('/player',        handler='views.playerView'),
+    Route('/newPlayer',     handler='views.newPlayerView'),
+    Route('/selector',      handler='views.selectorView'),
+    Route('/ladder',        handler='ladder.ladderView'),
+    Route('/recordGame',    handler='views.reportView'),
+    Route('/reportGame',    handler='views.reportView'),
+    Route('/<error>',       handler='views.errorHandler'),
     ]
 
 ROUTES2 = [
     Route('/viewAll', handler='views.ladderView'),
-
     ]
-
-
 
 TEMPLATE_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates')
 

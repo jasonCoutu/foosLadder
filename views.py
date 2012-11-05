@@ -1,5 +1,6 @@
 from google.appengine.ext import ndb
 from google.appengine.api import users
+from google.appengine.ext.webapp._webapp25 import RequestHandler
 from webapp2 import RequestHandler, cached_property
 from webapp2_extras import jinja2
 from models import PlayerModel, GameModel, MatchModel, skillBase_names
@@ -7,12 +8,13 @@ import logging
 import utils
 
 class TemplatedView(RequestHandler):
-    
+
     @cached_property
     def jinja2(self):
         return jinja2.get_jinja2(app=self.app)
-        
+
     def render_response(self, template, **context):
+        """ Pass a template (html) and a dictionary :) """
         content = self.jinja2.render_template(template, **context)
         self.response.write(content)
 
@@ -142,3 +144,8 @@ class mainView(TemplatedView):
                     numplayers=a.count(), active=b.count())
         else:
             self.render_response('main2.html', login=users.create_login_url('/'))
+
+class errorHandler(TemplatedView):
+
+    def get(self, error):
+        self.render_response("error.html", error_message=error)
