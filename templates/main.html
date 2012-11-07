@@ -5,10 +5,11 @@
     <div class="centered2">Welcome, {{ name }}</div>
 
     <div data-role="controlgroup">
-        <a href="/selector"><button>Look Up a Player</button></a>
+        <a href="/selector" data-role="button" data-icon="search" >Look Up a Player</a>
+{#        <a href="/compare" data-role="button" data-icon="info">Compare Yourself to a Player</a>#}
         {# Pretty sure this isn't necessary anymore, but leaving it for now #}
         {#<a href="/ladder"><button>Current Ladder</button></a>#}
-        <a href="/recordGame"><button>Record a Game</button></a>
+        <a href="/recordGame" data-role="button" data-icon="plus">Record a Game</a>
     </div>
     <div class="centered2"><p>There are currently {{ numplayers }} players in the ladder, {{ active }}
         have been active in the past month.</p></div>
@@ -34,6 +35,7 @@
             {% endfor %}
         </table>
     </div>
-    <a href="/settings"><button>User Options</button></a>
-    <a href="{{ logout }}" data-ajax="false"><button>Sign out</button></a>
+    <a href="/settings" data-role="button" data-icon="gear">User Options</a>
+    <a href="{{ logout }}" data-ajax="false" data-role="button" data-icon="alert">Sign out</a>
+    {% block home_button %}{% endblock %}
 {% endblock %}

@@ -81,14 +81,8 @@ def calculate_score_from_post(request):
 
     return [game1, game2, game3]
 
-def calc_player_info(player):
-    """ Returns information for the player viewing page """
-    name = player.first_name
-    last = player.last_name
-    skill = player.skillScore
-    wins = player.gamesWon
-    games = player.gamesPlayed
-    losses = games - wins
-    win_ratio = round(((wins / (games * 1.0)) * 100), 2)
-    return name, last, skill, wins, losses, games, win_ratio
     #name=a.first_name, last=a.last_name,skill=a.skillScore, wins=a.gamesWon, loses=(a.gamesPlayed - a.gamesWon)
+
+def calculate_winner():
+    #TODO: Pull out the win calculation logic from ladder.py and put it here
+    pass

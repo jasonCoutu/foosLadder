@@ -1,18 +1,19 @@
 {% extends "base.html" %}
-
+{% block heading %}Settings{% endblock %}
 {% block page_content %}
+<div class="centered2">
 {% if form_success %}
-    <p>It worked!</p>
+    <p>Your name was successfully changed to {{ fname }} {{ lname }}</p>
+    <a href="/" data-role="button" data-icon="delete" data-ajax="false">Back to main</a>
 {% else %}
-    <div class="centered2">
-        <p>Editing settings for {{ user.first_name }} {{ user.last_name }}:</p><br>
-        <form action="/settings" method="POST" id="playerSettings">
-            <label for="fname">First Name:</label><input type="text" required value="{{ user.first_name }}" id="fname" />
-            <label for="lname">Last Name:</label><input type="text" required value="{{ user.last_name }}" id="lname" />
-            <input type="hidden" value="{{ key }}" id="key" />
-            <input type="submit" value="Change your settings" data-icon="check" data-ajax="false" />
-        </form>
-        <a href="/" data-role="button" data-icon="delete" data-ajax="false">Discard changes and go back</a>
-    </div>
+    <form action="/settings" method="POST" id="playerSettings" name="playerSettings">
+        <label for="fname">First Name:</label><input type="text" required value="{{ user.first_name }}" id="fname" name="fname" />
+        <label for="lname">Last Name:</label><input type="text" required value="{{ user.last_name }}" id="lname" name="lname" />
+        <input type="hidden" value="{{ key }}" id="key" name="key" />
+        <input type="submit" value="Change your settings" data-icon="check" data-ajax="false" />
+    </form>
+    <a href="/" data-role="button" data-icon="delete" data-ajax="false">Discard changes and go back</a>
 {% endif %}
+</div>
+    {% block home_button %}{% endblock %}
 {% endblock %}

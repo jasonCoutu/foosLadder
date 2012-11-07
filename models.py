@@ -32,6 +32,7 @@ class GameModel(ndb.Model):
     player1 = ndb.IntegerProperty(required=True)
     player2 = ndb.IntegerProperty(required=True)
 
+
 class MatchModel(ndb.Model):
 
     gameDate = ndb.DateTimeProperty(auto_now=True)
