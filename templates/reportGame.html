@@ -6,9 +6,9 @@
 
 {% block title %}Report a Game{% endblock %}
 {% block styling_or_scripts %}
-    <style type="text/css">
-        .containing-element .ui-slider-switch { width: 50% }
-    </style>
+{#    <style type="text/css">#}
+{#        .containing-element .ui-slider-switch { width: 50% }#}
+{#    </style>#}
 {% endblock %}
 {% block heading %}Report a Game{% endblock %}
 {% block page_content %}
@@ -24,11 +24,10 @@
     <input type="submit" value="Submit Scores!" />
 </form>
     </div>
-<p><a href="/"><button>Back to main</button></a></p>
 {% endblock %}
 {% block body_scripts %}
 {#    <script type="text/javascript">#}
-        {# Eventually it'd be nice to think about using this #}
+{#        Eventually it'd be nice to think about using this #}
 {#    $(document).bind('pageinit', function(){#}
 {##}
 {#        $("select[name='player1']").change(function() {#}

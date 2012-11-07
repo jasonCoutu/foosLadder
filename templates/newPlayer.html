@@ -31,12 +31,13 @@
                 <tr class="alt">
                 {% set odd=True %}
             {% endif %}
-        <td>{{ player.first_name}} {{player.last_name}}</td>
-        <td> {{player.skillScore}}</td>
+        <td>{{ player.first_name }} {{ player.last_name }}</td>
+        <td>{{ player.skillScore }}</td>
         </tr>
         {% endfor %}
     </table>
 </div>
     <input data-icon="check" type="submit" value="Submit"/>
 </form>
+    {% block home_button %}{% endblock %}
 {% endblock %}

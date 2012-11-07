@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% from "macros.html" import playerSel %}
+
+{% block heading %}Compare Players{% endblock %}
+{% block page_content %}
+    {% if form_success %}
+        {% if user != opponent %}
+            <h1>{{ user }} compared with {{ opponent }}</h1>
+            {% for stat in stats %}
+                <p>{{ stat }}</p>
+            {% endfor %}
+        {% else %}
+            <p>You shouldn't be comparing to yourself...</p>
+        {% endif %}
+    {% else %}
+        <form action="/player" method="POST">
+            {{   playerSel(names, keys) }}
+            <input type="hidden" value="{{ user }}" name="user" id="user" />
+            <input type="submit" data-icon="info" value="Compare to this player" />
+        </form>
+    {% endif %}
+{% endblock %}

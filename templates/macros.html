@@ -53,20 +53,20 @@
     </div>
 {%- endmacro %}
 
-{% macro printGamesSlider(player1, player2) -%}
+{% macro printGamesSlider(player1="Player 1", player2="Player 2") -%}
     <label for="game1">Game 1</label>
     <select data-role="slider" id="game1">
-        <option class="player1" value="player1" selected="selected">Player 1</option>
-        <option class="player2" value="player2">Player 2</option>
+        <option class="player1" value="{{ player1 }}" selected="selected">{{ player1 }}</option>
+        <option class="player2" value="{{ player2 }}">{{ player2 }}</option>
     </select>
     <label for="game2">Game 2</label>
     <select data-role="slider" id="game2">
-        <option class="player1" value="player1" selected="selected">Player 1</option>
-        <option class="player2" value="player2">Player 2</option>
+        <option class="player1" value="{{ player1 }}" selected="selected">{{ player1 }}</option>
+        <option class="player2" value="{{ player2 }}">{{ player2 }}</option>
     </select>
     <label for="game3">Game 3</label>
     <select data-role="slider" id="game3">
-        <option class="player1" value="player1" selected="selected">Player 1</option>
-        <option class="player2" value="player2">Player 2</option>
+        <option class="player1" value="{{ player1 }}" selected="selected">{{ player1 }}</option>
+        <option class="player2" value="{{ player2 }}">{{ player2 }}</option>
     </select>
 {%- endmacro %}
