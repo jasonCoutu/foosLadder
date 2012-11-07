@@ -22,6 +22,7 @@
     {#<div class="page_content">#}
     <div data-role="content">
         {% block page_content %}{% endblock %}
+        {% block home_button %}<a href="/" data-role="button" data-icon="home">Back to main</a>{% endblock %}
     </div>
     <div data-role="footer">
         {% block footer %}Maintained by: Jason C. and Graham H.{% endblock %}
