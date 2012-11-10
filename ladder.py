@@ -1,11 +1,11 @@
 __author__ = 'VendAsta'
 
-from google.appengine.ext import ndb
-from google.appengine.api import users
-
 import logging
-
 import utils
+import datetime
+
+from google.appengine.ext import ndb
+from google.appengine.api import users, mail
 
 from views import TemplatedView
 from models import PlayerModel, GameModel, MatchModel, skillBase_names
@@ -71,14 +71,20 @@ class ladderView(TemplatedView):
         logging.info("Winner: %s" % winner)
         logging.info("Loser: %s" % loser)
 
-        logging.info("%s %s's old rank was %d" % (winner.first_name, winner.last_name, winner.skillScore))
-        logging.info("%s %s's old rank was %d" % (loser.first_name, loser.last_name, loser.skillScore))
+        logging.info("%s %s's old rank was %d" %
+                     (winner.first_name, winner.last_name, winner.skillScore))
+        logging.info("%s %s's old rank was %d" %
+                     (loser.first_name, loser.last_name, loser.skillScore))
 
         winnerRank, loserRank  = utils.calculate_elo_rank(winner.skillScore,
                                                           loser.skillScore)
 
-        logging.info("%s %s's rank is now %d" % (winner.first_name, winner.last_name, winnerRank))
-        logging.info("%s %s's rank is now %d" % (loser.first_name, loser.last_name, loserRank))
+        logging.info("%s %s's rank is now %d, a change of %d points" %
+                     (winner.first_name, winner.last_name, winnerRank,
+                      winnerRank - winner.skillScore))
+        logging.info("%s %s's rank is now %d, a change of %d points" %
+                     (loser.first_name, loser.last_name, loserRank,
+                      loser.skillScore - loserRank))
 
         winner.skillScore = int(winnerRank)
         loser.skillScore = int(loserRank)
@@ -106,6 +112,42 @@ class ladderView(TemplatedView):
 
         winner.put()
         loser.put()
+
+        user = users.get_current_user()
+        user_email = str(user.email())
+        if user_email != str(a.player1):
+            opponent_email = str(a.player1)
+        else:
+            opponent_email = str(a.player2)
+
+        message = mail.EmailMessage()
+        message.sender = user_email
+        message.to = opponent_email
+        message.subject = "Match Entry - Vendasta Foosball Ladder"
+        if winner == players[0]:
+            message.html = """
+<p>A match was entered between %s (winner) and %s (loser).</p>
+<p>The game scores were %d-%d, %d-%d, %d-%d</p>
+<p>Check out the ladder by going <a href='http://vendladder.appspot.com'>here</a>.</p>
+""" % (winner.first_name + " " + winner.last_name,
+       loser.first_name + " " + loser.last_name,
+            a.scores[0].player1, a.scores[0].player2,
+            a.scores[1].player1, a.scores[1].player2,
+            a.scores[2].player1, a.scores[2].player2)
+        else:
+            message.html = """
+<p>A match was entered between %s (winner) and %s (loser).</p>
+<p>The game scores were %d-%d, %d-%d, %d-%d</p>
+<p>Check out the ladder by going <a href='http://vendladder.appspot.com'>here</a>.</p>
+""" % (winner.first_name + " " + winner.last_name,
+       loser.first_name + " " + loser.last_name,
+           a.scores[0].player2, a.scores[0].player1,
+           a.scores[1].player2, a.scores[1].player1,
+           a.scores[2].player2, a.scores[2].player1)
+
+        logging.info("Emailing %s from %s" % (user_email, opponent_email))
+
+        message.send()
 
         self.get()
 

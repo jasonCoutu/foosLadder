@@ -148,10 +148,12 @@ class playerView(TemplatedView):
     def post(self):
         key=ndb.Key(PlayerModel, self.request.POST['selector'])
         a = key.get()
-        name, last, skill, wins, losses, games, win_ratio = player_utils.calc_player_info(a)
+        name, last, skill, wins, losses, games, win_ratio, last_five_games, \
+            streak = player_utils.calc_player_info(a, key)
         logging.info("Displaying info on %s %s" % (name, last))
         self.render_response('player.html', name=name, last=last, skill=skill,
-            wins=wins, losses=losses, games=games, win_ratio=win_ratio)
+            wins=wins, losses=losses, games=games, win_ratio=win_ratio,
+            last_five_games=last_five_games, streak=streak)
 
 
 class reportView(TemplatedView):

@@ -83,6 +83,35 @@ def calculate_score_from_post(request):
 
     #name=a.first_name, last=a.last_name,skill=a.skillScore, wins=a.gamesWon, loses=(a.gamesPlayed - a.gamesWon)
 
-def calculate_winner():
-    #TODO: Pull out the win calculation logic from ladder.py and put it here
-    pass
+def calculate_winner(p1_score, p2_score):
+    if p1_score > p2_score:
+        return "player1"
+    elif p2_score > p1_score:
+        return "player2"
+    else:
+        return "tied"
+
+def number_to_word(number):
+    if number > 9 or number < 0:
+        return number
+    else:
+        if number == 0:
+            return "zero"
+        elif number == 1:
+            return "one"
+        elif number == 2:
+            return "two"
+        elif number == 3:
+            return "three"
+        elif number == 4:
+            return "four"
+        elif number == 5:
+            return "five"
+        elif number == 6:
+            return "six"
+        elif number == 7:
+            return "seven"
+        elif number == 8:
+            return "eight"
+        elif number == 9:
+            return "nine"

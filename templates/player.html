@@ -9,9 +9,20 @@
     <h1>{{name}} {{last}}</h1>
     <p>
         Skill Score: {{ skill }}<br>
-        Games played: {{ games }}<br>
+        Games played: {{ games }}<br><br>
         Wins/Losses: {{ wins }}/{{ losses }}<br>
-        Win Percentage: {{ win_ratio }}%
+        Win Percentage:
+        {% if wins == 0 and losses == 0 %}
+        - %
+        {% else %}
+        {{ win_ratio }}%
+        {% endif %}<br><br>
+        Record over the last
+        {% if not last_five_games.total %}one game:
+        {% else %}{{ last_five_games.total }} games:
+        {% endif %}<br>
+        {{ last_five_games.wins }}-{{ last_five_games.losses }}<br><br>
+        {{ streak }}
     </p><br>
     </div>
     <a href="selector"><button>Look up another player</button></a>
