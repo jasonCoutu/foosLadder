@@ -19,6 +19,13 @@ class TemplatedView(RequestHandler):
 
     def render_response(self, template, **context):
         """ Pass a template (html) and a dictionary :) """
+
+        if "logout" not in context.keys() or "login" not in context.keys():
+            user = users.get_current_user()
+            if user:
+                context["logout"] = users.create_logout_url("/")
+            else:
+                context["login"] = users.create_login_url("/")
         content = self.jinja2.render_template(template, **context)
         self.response.write(content)
 
@@ -135,7 +142,7 @@ class newPlayerView(TemplatedView):
         a.skillScore = int(skillBase_names[a.skillBase])
         logging.debug("Putting new Player %s" % key )
         a.put()
-        self.get()
+        self.redirect("/")
 
 
 class playerView(TemplatedView):
@@ -155,6 +162,21 @@ class playerView(TemplatedView):
             wins=wins, losses=losses, games=games, win_ratio=win_ratio,
             last_five_games=last_five_games, streak=streak)
 
+class playerStatsView(TemplatedView):
+
+    def get(self):
+        pKey = self.request.GET["key"]
+        if pKey:
+            key=ndb.Key(pKey)
+            a = key.get()
+            name, last, skill, wins, losses, games, win_ratio, last_five_games,\
+            streak = player_utils.calc_player_info(a, key)
+            logging.info("Displaying info on %s %s" % (name, last))
+            self.render_response('player.html', name=name, last=last, skill=skill,
+                wins=wins, losses=losses, games=games, win_ratio=win_ratio,
+                last_five_games=last_five_games, streak=streak)
+        else:
+            self.render_response('error.html', error_message="Player %s does not exist" % pKey)
 
 class reportView(TemplatedView):
 
@@ -165,28 +187,29 @@ class reportView(TemplatedView):
         #        logging.info(name_list)
         #        logging.info("::::")
         user = users.get_current_user()
-        self.render_response('reportGame.html', user=[name_list[user.email()], ], userKey=[user.email()] , names=name_list.values(), keys=name_list.keys())
+        self.render_response('reportGame.html', user=[name_list[user.email()], ], userKey=user.email() , names=name_list.values(), keys=name_list.keys())
 
 
 class selectorView(TemplatedView):
 
     def get(self):
-        keys = []
         a=PlayerModel.query()
         name_list= dict([(i.key.id(),"%s %s" % (i.first_name, i.last_name) )for i in a.iter()] )
-        #        logging.info(name_list)
-        #        logging.info("::::")
         self.render_response('selector.html', names=name_list.values(), keys=name_list.keys())
 
 
 class settingsView(TemplatedView):
 
-    def get(self):
+    def get(self, form_success=None):
         user = users.get_current_user()
         if user is not None:
             key = ndb.Key(PlayerModel, user.email())
             a = key.get()
-            self.render_response("settings.html", user=a, key=user.email())
+            name, last, skill, wins, losses, games, win_ratio, last_five_games,\
+            streak = player_utils.calc_player_info(a, key)
+            self.render_response("settings.html", user=a, key=user.email(), name=name, last=last, skill=skill,
+                          wins=wins, losses=losses, games=games, win_ratio=win_ratio,
+                           last_five_games=last_five_games, streak=streak,form_success=form_success)
         else:
             self.render_response("error.html", error_message=user)
 
@@ -198,5 +221,5 @@ class settingsView(TemplatedView):
 
             player_utils.update_player_name(key, fname, lname)
 
-            self.render_response("settings.html", form_success=True, fname=fname, lname=lname)
+            self.get(form_success=True)
 

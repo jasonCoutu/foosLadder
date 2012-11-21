@@ -1,12 +1,11 @@
 {% extends "base.html" %}
     {% block title %}
-        Player Lookup - {{ name }} {{ last }}
+        Player Directory
     {% endblock %}
 
-{% block heading %}Player Lookup{% endblock %}
+{% block heading %}Player Directory{% endblock %}
 {% block page_content %}
-    <div class="centered2">
-    <h1>{{name}} {{last}}</h1>
+    <h3>{{name}} {{last}}</h3>
     <p>
         Skill Score: {{ skill }}<br>
         Games played: {{ games }}<br><br>
@@ -20,10 +19,10 @@
         Record over the last
         {% if not last_five_games.total %}one game:
         {% else %}{{ last_five_games.total }} games:
-        {% endif %}<br>
+        {% endif %}
         {{ last_five_games.wins }}-{{ last_five_games.losses }}<br><br>
         {{ streak }}
-    </p><br>
-    </div>
-    <a href="selector"><button>Look up another player</button></a>
+    </p>
+
+
 {% endblock %}

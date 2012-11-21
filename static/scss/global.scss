@@ -1,61 +1,16 @@
-@import "screen.scss";
-
-h1 {
-  font-size: 2em;
-}
-
-.centered_header {
-  text-align: center;
-  color: white;
-  background-color: #4c7b65;
-}
-
 body {
+  padding-top: 30px;
+  padding-left: 10px;
   font-family: sans-serif;
-  background-color: #EEEEEE;
-}
-
-.page_content {
-  text-align: center;
-}
-
-// Styling the ladder in /ladder
-.Players {
-  margin-left: auto;
-  margin-right: auto;
-  border-collapse:collapse;
-  width: 60%;
-  td, th {
-    font-size:1em;
-    text-align:center;
-    border:1px solid #c6c9ac;
-    padding:3px 7px 2px 7px;
-  }
-  th {
-    font-size:1.1em;
-    text-align:center;
-    padding-top:5px;
-    padding-bottom:4px;
-    background-color: #c6c9ac;
-    color:#ffffff;
-  }
-  tr.alt td {
-      color:#000000;
-      background-color: #d4d7ba;
+  background: #FFFFFF url('/static/img/foosladder.png') no-repeat fixed center;
+  html {
+    overflow: hidden;
+    height: 100%;
   }
 }
 
-div.centered2 {
-  text-align: center;
-}
-
-div.centered2 table {
-  margin: 0 auto;
-  text-align: left;
-}
-
-div.centered-max-width {
-  text-align: center;
-  padding: 5px;
-  max-width: auto;
+.container.body {
+  background-color: #FFFFFF;
+  background-color: rgba(255,255,255,0.8);
+  border-radius: 10px;
 }

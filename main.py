@@ -11,6 +11,7 @@ ROUTES = [
     Route('/reportGame',    handler='views.reportView'),
     Route('/settings',      handler='views.settingsView'),
     Route('/compare',       handler='views.compareView'),
+    Route('/playerView',    handler='views.playerStatsView'),
     SimpleRoute('/.+',      handler='views.errorHandler'),
     ]
 

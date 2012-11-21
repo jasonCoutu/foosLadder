@@ -37,6 +37,7 @@ def get_ladder():
     import datetime
     a=PlayerModel.query()
     a=a.order(-PlayerModel.skillScore)
+
     b=PlayerModel.query()
     lastweek = datetime.datetime.now() - datetime.timedelta(days=7)
     b=b.filter(PlayerModel.lastGame > lastweek)

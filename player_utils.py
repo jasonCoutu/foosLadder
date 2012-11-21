@@ -6,8 +6,7 @@ from models import PlayerModel, MatchModel
 from utils import calculate_winner, number_to_word
 
 def update_player_name(key, fname, lname):
-    keys = ndb.Key(PlayerModel, key )
-    user = keys.get()
+    user = PlayerModel.get_by_id(key)
 
     user.first_name = fname
     user.last_name = lname

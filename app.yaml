@@ -1,5 +1,5 @@
 application: vendladder
-version: foos-22
+version: foos-3
 runtime: python27
 api_version: 1
 threadsafe: false
@@ -10,8 +10,8 @@ libraries:
 
 handlers:
 - url: /favicon\.ico
-  static_files: static/images/favicon.ico
-  upload: static/images/favicon\.ico
+  static_files: static/img/favicon.ico
+  upload: static/img/favicon\.ico
 
 - url: /static
   static_dir: static

@@ -2,17 +2,12 @@
 {% macro playerSel(names, keys, name='selector') -%}
 <select id={{ name }} name={{ name }}>
     {% for key in keys %}
-        {# Trying to have it NOT print your name in the opponents box, #}
-        {# since that doesn't really make sense #}
-{#        {{ key }} {{ userKey }}#}
-{#        {% if key != userKey %}#}
         {% if keys|count() == 1 %}
             <option selected="selected" value="{{ key }}">{{names[loop.index0]}}</option>
         {% else %}
             <option value="{{ key }}">{{names[loop.index0]}}</option>
         {% endif %}
     {% endfor %}
-
 </select>
 {%- endmacro %}
 
@@ -27,8 +22,8 @@
 {%- endmacro %}
 
 {% macro playerScore( name='p1g1') -%}
-<select name={{ name }} id={{ name }}>
-    {% for key in '012345'%}
+<select name={{ name }} id={{ name }} class="input-small">
+    {% for key in '012345' %}
         <option value="{{ key }}">{{key}}</option>
     {% endfor %}
 
@@ -36,21 +31,43 @@
 {%- endmacro %}
 
 {% macro printGames() -%}
-    <b>Game 1</b>
-    <div data-role="controlgroup">
+<div class="control-group">
+    <label class="control-label">Game 1</label>
+    <div class="controls">
         {{   playerScore('p1g1') }}
         {{   playerScore('p2g1') }}
     </div>
-    <b>Game 2</b>
-    <div data-role="controlgroup">
+    <label class="control-label">Game 2</label>
+    <div class="controls">
         {{   playerScore('p1g2') }}
         {{   playerScore('p2g2') }}
     </div>
-    <b>Game 3</b>
-    <div data-role="controlgroup">
+    <label class="control-label">Game 3</label>
+    <div class="controls">
         {{   playerScore('p1g3') }}
         {{   playerScore('p2g3') }}
     </div>
+</div>
+{%- endmacro %}
+
+{% macro printGamesFluid() -%}
+<div class="control-group">
+    <label class="control-label">Game 1</label>
+    <div class="controls">
+        {{   playerScore('p1g1') }}
+        {{   playerScore('p2g1') }}
+    </div>
+    <label class="control-label">Game 2</label>
+    <div class="controls">
+        {{   playerScore('p1g2') }}
+        {{   playerScore('p2g2') }}
+    </div>
+    <label class="control-label">Game 3</label>
+    <div class="controls">
+        {{   playerScore('p1g3') }}
+        {{   playerScore('p2g3') }}
+    </div>
+</div>
 {%- endmacro %}
 
 {% macro printGamesSlider(player1="Player 1", player2="Player 2") -%}

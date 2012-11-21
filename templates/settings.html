@@ -1,19 +1,45 @@
 {% extends "base.html" %}
-{% block heading %}Settings{% endblock %}
+
+{% block title %}User Settings{% endblock %}
+
+{% block current_settings %}class="active"{% endblock %}
+
+{% block heading %}See your reflection staring back at you{% endblock %}
+
 {% block page_content %}
-<div class="centered2">
-{% if form_success %}
-    <p>Your name was successfully changed to {{ fname }} {{ lname }}</p>
-    <a href="/" data-role="button" data-icon="delete" data-ajax="false">Back to main</a>
-{% else %}
-    <form action="/settings" method="POST" id="playerSettings" name="playerSettings">
-        <label for="fname">First Name:</label><input type="text" required value="{{ user.first_name }}" id="fname" name="fname" />
-        <label for="lname">Last Name:</label><input type="text" required value="{{ user.last_name }}" id="lname" name="lname" />
-        <input type="hidden" value="{{ key }}" id="key" name="key" />
-        <input type="submit" value="Change your settings" data-icon="check" data-ajax="false" />
-    </form>
-    <a href="/" data-role="button" data-icon="delete" data-ajax="false">Discard changes and go back</a>
-{% endif %}
-</div>
-    {% block home_button %}{% endblock %}
+    {% if form_success %}
+        <p>Your name was successfully changed to {{ user.first_name }} {{ user.last_name }}</p>
+        <a href="/settings" class="btn btn-success">Change it again?</a>
+    {% else %}
+        <form action="/settings" method="POST" id="playerSettings" name="playerSettings" class="form-horizontal">
+            <label for="fname">First Name:</label>
+            <input type="text" required value="{{ user.first_name }}" id="fname" name="fname" />
+            <label for="lname">Last Name:</label>
+            <input type="text" required value="{{ user.last_name }}" id="lname" name="lname" />
+
+            <input type="hidden" value="{{ key }}" id="key" name="key" />
+            <br><br>
+            <button type="submit" class="btn btn-primary">Change it!</button>
+        </form>
+    {% endif %}
+    <hr>
+    <h3>{{name}} {{last}}</h3>
+    <p>
+        Skill Score: {{ skill }}<br>
+        Games played: {{ games }}<br><br>
+        Wins/Losses: {{ wins }}/{{ losses }}<br>
+        Win Percentage:
+        {% if wins == 0 and losses == 0 %}
+            - %
+        {% else %}
+            {{ win_ratio }}%
+        {% endif %}<br><br>
+        Record over the last
+        {% if not last_five_games.total %}one game:
+            {% else %}{{ last_five_games.total }} games:
+        {% endif %}
+        {{ last_five_games.wins }}-{{ last_five_games.losses }}<br><br>
+        {{ streak }}
+    </p>
+    <button onclick="javascript:alert('Coming sometime!')" class="btn btn-danger">Reset stats?</button>
 {% endblock %}
