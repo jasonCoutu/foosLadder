@@ -155,12 +155,9 @@ class ladderView(TemplatedView):
     def get(self):
         players_total, actives = utils.get_ladder()
         user = users.get_current_user()
-        players=[i for i in players_total.iter()]
-        player_keys = []
-        for player in players:
-            pKey = player.key['PlayerModel']
-
-            player_keys.append(pKey)
+        players=[]
+        for player in players_total.iter():
+            players.append((player.key.id(), "%s %s" % (player.first_name, player.last_name), player.skillScore))
         self.render_response('ladder.html',
             players=players,
             numplayers=players_total.count(), active=actives.count(), user=user)

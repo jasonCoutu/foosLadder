@@ -7,11 +7,10 @@
 {% block heading %}Aim High{% endblock %}
 
 {% block page_content %}
-    <p>There are currently {{ numplayers }} players in the ladder, {{ active }}
-        have been active in the past month.</p>
-
-<table class="table table-striped">
-  <caption>Click on a player's name to go to their stats page</caption>
+<table class="table table-bordered">
+    <caption>There are currently {{ numplayers }} players in the ladder, {{ active }}
+        have been active in the past month.<br>
+        <b>Click on a player's name to go to their stats page.</b></caption>
   <tr>
       <th>Name</th>
       <th>SkillScore</th>
@@ -25,8 +24,8 @@
         <tr class="alt">
         {% set odd=True %}
     {% endif %}
-            <td><a href="/playerView?key={{ player.key }}">{{ player.first_name }} {{ player.last_name }}</a></td>
-            <td>{{ player.skillScore }}</td>
+            <td><a href="/playerView?key={{ player[0] }}">{{ player[1] }}</a></td>
+            <td>{{ player[2] }}</td>
         </tr>
 {% endfor %}
 </table>

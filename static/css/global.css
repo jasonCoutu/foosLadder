@@ -3,15 +3,21 @@ body {
   padding-top: 30px;
   padding-left: 10px;
   font-family: sans-serif;
-  background: white url("/static/img/foosladder.png") no-repeat fixed center;
+  background: white url("/static/img/ladder.png") no-repeat fixed center;
+  background-size: contain;
 }
-/* line 6, ../scss/global.scss */
+/* line 7, ../scss/global.scss */
 body html {
   overflow: hidden;
   height: 100%;
 }
 
-/* line 12, ../scss/global.scss */
+/* line 13, ../scss/global.scss */
+table a {
+  color: black;
+}
+
+/* line 17, ../scss/global.scss */
 .container.body {
   background-color: #FFFFFF;
   background-color: rgba(255, 255, 255, 0.8);

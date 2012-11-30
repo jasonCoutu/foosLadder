@@ -21,17 +21,24 @@
 
                 <div class="nav-collapse collapse">
                     <ul class="nav">
+                    {% if new %}
+                        <li class="active"><a href="/">Home</a></li>
+                        <li><a href="{{ logout }}">Sign Out</a></li>
+                    {% else %}
+                        <li {% block current_about %}{% endblock %}><a href="/about">About</a></li>
                         <li {% block current_home %}{% endblock %}><a href="/">Home</a></li>
                         <li {% block current_ladder %}{% endblock %}><a href="/ladder">Ladder</a></li>
                         {% if logout %}
-                        <li {% block current_selector %}{% endblock %}><a href="/selector">View a Player</a></li>
-                        <li {% block current_reporter %}{% endblock %}><a href="/recordGame">Report a Game</a></li>
-                        <li {% block current_settings %}{% endblock %}><a href="/settings">My Settings</a></li>
-                        <li class="divider-vertical hidden-phone"></li>
-                        <li class="hidden-phone"><a href="{{ logout }}">Sign Out</a></li>
+                            <li {% block current_selector %}{% endblock %}><a href="/selector">View a Player</a></li>
+                            <li {% block current_reporter %}{% endblock %}><a href="/recordGame">Report a Game</a></li>
+                            <li {% block current_settings %}{% endblock %}><a href="/settings">Settings</a></li>
+                            <li class="divider-vertical"></li>
+                            <li><a href="{{ logout }}">Sign Out</a></li>
                         {% else %}
-                        <li class="hidden-phone"><a href="{{ login }}">Sign In</a></li>
+                            <li class="divider-vertical"></li>
+                            <li><a href="{{ login }}">Sign In</a></li>
                         {% endif %}
+                    {% endif %}
                     </ul>
                 </div>
             </div>

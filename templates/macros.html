@@ -1,8 +1,8 @@
 
-{% macro playerSel(names, keys, name='selector') -%}
+{% macro playerSel(names, keys, name='selector', oppKey="none") -%}
 <select id={{ name }} name={{ name }}>
     {% for key in keys %}
-        {% if keys|count() == 1 %}
+        {% if oppKey == key %}
             <option selected="selected" value="{{ key }}">{{names[loop.index0]}}</option>
         {% else %}
             <option value="{{ key }}">{{names[loop.index0]}}</option>
@@ -68,22 +68,4 @@
         {{   playerScore('p2g3') }}
     </div>
 </div>
-{%- endmacro %}
-
-{% macro printGamesSlider(player1="Player 1", player2="Player 2") -%}
-    <label for="game1">Game 1</label>
-    <select data-role="slider" id="game1">
-        <option class="player1" value="{{ player1 }}" selected="selected">{{ player1 }}</option>
-        <option class="player2" value="{{ player2 }}">{{ player2 }}</option>
-    </select>
-    <label for="game2">Game 2</label>
-    <select data-role="slider" id="game2">
-        <option class="player1" value="{{ player1 }}" selected="selected">{{ player1 }}</option>
-        <option class="player2" value="{{ player2 }}">{{ player2 }}</option>
-    </select>
-    <label for="game3">Game 3</label>
-    <select data-role="slider" id="game3">
-        <option class="player1" value="{{ player1 }}" selected="selected">{{ player1 }}</option>
-        <option class="player2" value="{{ player2 }}">{{ player2 }}</option>
-    </select>
 {%- endmacro %}

@@ -3,10 +3,12 @@
         Player Directory
     {% endblock %}
 
+{% block current_selector %}class="active"{% endblock %}
+
 {% block heading %}Player Directory{% endblock %}
 {% block page_content %}
     <h3>{{name}} {{last}}</h3>
-    <p>
+    <div>
         Skill Score: {{ skill }}<br>
         Games played: {{ games }}<br><br>
         Wins/Losses: {{ wins }}/{{ losses }}<br>
@@ -22,7 +24,13 @@
         {% endif %}
         {{ last_five_games.wins }}-{{ last_five_games.losses }}<br><br>
         {{ streak }}
-    </p>
+        <br><br>
+        {% if key and key != user and user %}
+            <a href="/recordGame?oppKey={{ key }}" class="btn">Challenge this person to a game!</a>
+        {% elif key == user %}
+            <p class="text-warning">This is you!</p>
+        {% endif %}
+    </div>
 
 
 {% endblock %}

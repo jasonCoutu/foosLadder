@@ -26,9 +26,10 @@
                 {{ rankingsSel(keys, keyVals, 'skillBaseVal') }}
             </div>
         </div>
+
+        <input type="hidden" name="key" value="{{ playerKey }}" readonly="True"/>
+        <button type="submit" class="btn btn-large">Submit</button>
     </fieldset>
-    <input type="hidden" name="key" value="{{ playerKey }}" readonly="True"/>
-    <button type="submit" class="btn">Submit</button>
 </form>
     <div class="alert alert-info">If you aren't sure where you should be as far as points go, keep in mind
         that in general, 1000 is considered a bright beginner. You can also take a

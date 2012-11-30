@@ -1,6 +1,7 @@
 import logging
 
 from google.appengine.ext import ndb
+from google.appengine.ext.db import Model
 from google.appengine.api import users
 from google.appengine.ext.webapp._webapp25 import RequestHandler
 from webapp2 import RequestHandler, cached_property
@@ -28,6 +29,12 @@ class TemplatedView(RequestHandler):
                 context["login"] = users.create_login_url("/")
         content = self.jinja2.render_template(template, **context)
         self.response.write(content)
+
+
+class aboutView(TemplatedView):
+
+    def get(self):
+        self.render_response("about.html")
 
 
 class compareView(TemplatedView):
@@ -63,10 +70,15 @@ class mainView(TemplatedView):
             #a = PlayerModel(key=key)
             a = key.get()
             if a:
-                a, b = utils.get_ladder()
-                self.render_response('main.html', players=[i for i in a.iter()],
-                    numplayers=a.count(), active=b.count(),
-                    logout=users.create_logout_url("/"), name=user.nickname())
+                players_total, actives = utils.get_ladder()
+                user = users.get_current_user()
+                players=[]
+                for player in players_total.iter():
+                    players.append((player.key.id(), "%s %s" % (player.first_name, player.last_name), player.skillScore))
+                self.render_response('main.html',
+                    players=players,
+                    numplayers=players_total.count(), active=actives.count(), user=user,
+                    name=user.nickname())
             else:
                 table = []
                 for i,j in skillBase_names.iteritems():
@@ -79,7 +91,7 @@ class mainView(TemplatedView):
                     keyVals=table,
                     nick=user.nickname(), playerKey=user.email(),
                     players=[i for i in a.iter()],
-                    numplayers=a.count(), active=b.count())
+                    numplayers=a.count(), active=b.count(),new=True)
         else:
             self.render_response('main2.html', login=users.create_login_url('/'))
 
@@ -160,23 +172,30 @@ class playerView(TemplatedView):
         logging.info("Displaying info on %s %s" % (name, last))
         self.render_response('player.html', name=name, last=last, skill=skill,
             wins=wins, losses=losses, games=games, win_ratio=win_ratio,
-            last_five_games=last_five_games, streak=streak)
+            last_five_games=last_five_games, streak=streak, key=key.id())
 
 class playerStatsView(TemplatedView):
 
     def get(self):
         pKey = self.request.GET["key"]
         if pKey:
-            key=ndb.Key(pKey)
+            key = ndb.Key(PlayerModel, str(pKey))
             a = key.get()
             name, last, skill, wins, losses, games, win_ratio, last_five_games,\
             streak = player_utils.calc_player_info(a, key)
+            user = users.get_current_user()
             logging.info("Displaying info on %s %s" % (name, last))
-            self.render_response('player.html', name=name, last=last, skill=skill,
-                wins=wins, losses=losses, games=games, win_ratio=win_ratio,
-                last_five_games=last_five_games, streak=streak)
+            if user:
+                self.render_response('player.html', name=name, last=last, skill=skill,
+                    wins=wins, losses=losses, games=games, win_ratio=win_ratio,
+                    last_five_games=last_five_games, streak=streak, key=pKey, user=user.email())
+            else:
+                self.render_response('player.html', name=name, last=last, skill=skill,
+                    wins=wins, losses=losses, games=games, win_ratio=win_ratio,
+                    last_five_games=last_five_games, streak=streak, key=pKey, user=None)
         else:
             self.render_response('error.html', error_message="Player %s does not exist" % pKey)
+
 
 class reportView(TemplatedView):
 
@@ -187,7 +206,14 @@ class reportView(TemplatedView):
         #        logging.info(name_list)
         #        logging.info("::::")
         user = users.get_current_user()
-        self.render_response('reportGame.html', user=[name_list[user.email()], ], userKey=user.email() , names=name_list.values(), keys=name_list.keys())
+        try:
+            oppKey = self.request.GET["oppKey"]
+            self.render_response('reportGame.html',
+                user=[name_list[user.email()], ], userKey=user.email(),
+                names=name_list.values(), keys=name_list.keys(), key=oppKey)
+        except KeyError:
+            self.render_response('reportGame.html', user=[name_list[user.email()], ],
+                userKey=user.email() , names=name_list.values(), keys=name_list.keys())
 
 
 class selectorView(TemplatedView):

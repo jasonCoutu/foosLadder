@@ -6,9 +6,30 @@
 {% block heading %}Home Sweet Home{% endblock %}
 
 {% block page_content %}
-    <p>Welcome, {{ name }}, to the VendAsta Foosball Ladder; THE place to do all
-    of your game entry for foosball played at VendAsta. Check out what you can do
-    here:</p>
+    <p>Welcome, {{ name }}, to the VendAsta Foosball Ladder.</p>
+
+    <table class="table table-bordered">
+        <caption>There are currently {{ numplayers }} players in the ladder, {{ active }}
+            have been active in the past month.<br>
+            <b>Click on a player's name to go to their stats page.</b></caption>
+        <tr>
+            <th>Name</th>
+            <th>SkillScore</th>
+        </tr>
+        {% set odd=True %}
+        {%  for player in players %}
+            {% if odd %}
+                <tr>
+                    {% set odd=False %}
+                    {% else %}
+                <tr class="alt">
+                {% set odd=True %}
+            {% endif %}
+        <td><a href="/playerView?key={{ player[0] }}">{{ player[1] }}</a></td>
+        <td>{{ player[2] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 
 {#    <div class="row-fluid">#}
 {#        <div class="span3"><a href="/ladder" class="btn btn-large">Check out the Ladder</a></div>#}
@@ -16,16 +37,15 @@
 {#        <div class="span3"><a href="/recordGame" class="btn btn-large">Record a game</a></div>#}
 {#        <div class="span3"><a href="/settings" class="btn btn-large">View your settings</a></div>#}
 {#    </div>#}
-    <div style="text-align:center">
-    <a href="/ladder" class="btn btn-large">Check out the Ladder</a>
-    <a href="/selector" class="btn btn-large">View the Player Directory</a>
-    <a href="/recordGame" class="btn btn-large">Report a game</a>
-    <a href="/settings" class="btn btn-large">View your settings</a>
-    </div>
-    <div class="visible-phone">
-        {% if logout %}
-            <p>Mobile users can also:</p>
-        <a href="{{ logout }}" class="btn btn-danger">Sign Out</a>
-        {% endif %}
-    </div>
+{#    <div style="text-align: center">#}
+{#        <div class="btn-group btn-group-vertical">#}
+{#            <a href="/ladder" class="btn btn-large">Check out the Ladder</a>#}
+{#            <a href="/selector" class="btn btn-large">View the Player Directory</a>#}
+{#            <a href="/recordGame" class="btn btn-large">Report a game</a>#}
+{#            <a href="/settings" class="btn btn-large">View your settings</a>#}
+{#            {% if logout %}#}
+{#            <a href="{{ logout }}" class="visible-phone btn btn-danger btn-large">Sign Out</a>#}
+{#            {% endif %}#}
+{#        </div>#}
+{#    </div>#}
 {% endblock %}

@@ -5,6 +5,7 @@ from models import PlayerModel, GameModel
 PLAYER_A = 1
 PLAYER_B = 2
 
+#TODO: use this http://elo.divergentinformatics.com/ (or something like it)
 def calculate_elo_rank(player_a_rank=1600, player_b_rank=1600, winner=PLAYER_A, penalize_loser=True):
     if winner is PLAYER_A:
         winner_rank, loser_rank = player_a_rank, player_b_rank
