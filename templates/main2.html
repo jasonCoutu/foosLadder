@@ -2,25 +2,13 @@
 
 {% block title %}VendAsta Foos Ladder{% endblock %}
 
-{% block styling_or_scripts %}
-    <style type="text/css">
-        .hero-unit {
-            background-color: #eeeeee;
-            background-color: rgba(238, 238, 238, 0.8);
-        }
-    </style>
- {% endblock %}
-
 {% block current_home %}class="active"{% endblock %}
 
+{% block heading %}VendAsta Foosball Ladder <small>For the people, by the people</small>{% endblock %}
+
 {% block page_content %}
-    <div class="hero-unit">
-        <h1>VendAsta Foosball Ladder</h1>
-        <p>Welcome here! Click the buttons along the top to check things out, or click below to sign in.</p>
-        <p>
-            <a class="btn btn-primary btn-large" href="{{ login }}">
-                Sign in
-            </a>
-        </p>
-    </div>
+    <p>Welcome here! Click the buttons along the top to check things out, or click below to sign in.</p>
+    <a class="btn btn-primary" href="{{ login }}">
+        Sign in
+    </a>
 {% endblock %}

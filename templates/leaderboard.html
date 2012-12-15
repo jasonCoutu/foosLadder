@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% from "macros.html" import leaderboard %}
+
+{% block title %}Leaderboard{% endblock %}
+
+{% block styling_or_scripts %}
+<script>
+    $(function(){
+        $("#leaderAccordion").accordion("icons");
+    });
+</script>
+{% endblock %}
+
+{% block heading %}Top of the Crop <small>And Creeps of the Heap</small>{% endblock %}
+
+{% block current_leader %}class="active"{% endblock %}
+
+{% block page_content %}
+    <div id="leaderAccordion">
+        <h3>Most goals scored</h3>
+        <div id="goals">
+            {{ leaderboard(goals, "Goals") }}
+        </div>
+
+        <h3>Most goals-against</h3>
+        <div id="goals_against">
+            {{ leaderboard(goals_against, "Goals Against") }}
+        </div>
+
+        <h3>Most wins</h3>
+        <div id="wins">
+            {{ leaderboard(wins, "Wins") }}
+        </div>
+
+        <h3>Most losses</h3>
+        <div id="losses">
+            {{ leaderboard(losses, "Losses") }}
+        </div>
+
+        <h3>Most games played</h3>
+        <div id="games">
+            {{ leaderboard(games, "Games") }}
+        </div>
+    </div>
+{% endblock %}

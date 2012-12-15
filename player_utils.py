@@ -1,5 +1,6 @@
 import logging
 
+from operator import itemgetter
 from google.appengine.ext import ndb
 
 from models import PlayerModel, MatchModel
@@ -15,6 +16,97 @@ def update_player_name(key, fname, lname):
 
 def compare_players(user, opponent):
     pass
+
+def get_most_games(type="total", top=5):
+    """
+    Gets the top X number of people with the chosen type of game
+    @param type: Which type of games to calculate. The default is "total", which
+    will just get all games. Accepted inputs: "wins" and "losses"
+    @param top: Number of people to collect
+    """
+    players = PlayerModel.query()
+    player_games = []
+    for player in players:
+        email = player.key.id()
+        games = 0
+        new_player = {
+            "email":email,
+            "data":0,
+            "full_name":get_player_full_name(email)
+        }
+        if type == "wins":
+            games = player.gamesWon
+        elif type == "losses":
+            games = player.gamesPlayed - player.gamesWon
+        elif type == "total":
+            games = player.gamesPlayed
+        new_player['data'] = games
+        player_games.append(new_player)
+
+    sorted_players = sorted(player_games, key=itemgetter('data'))
+
+    if len(sorted_players) < top:
+        top = len(sorted_players)
+
+    return sorted_players[len(sorted_players)-top:]
+
+def get_highest_goals(against=False, top=5):
+    """
+    Pass in a boolean to tell the method to calculate goals against instead of
+    the default which is goals for.
+    @return: a list of dictionaries containing the top however many people with
+    the highest goals
+    @param against: Pass True if you want this to count goals against
+    @param top: Pass in the number of "top" people you want (e.g. Top 5)
+    """
+    players = PlayerModel.query()
+
+    player_goals = []
+    for player in players:
+        email = player.key.id()
+        matches = MatchModel.query(ndb.OR(MatchModel.player1 == email,
+                                      MatchModel.player2 == email))
+        goals = 0
+        new_player = {
+            'email': email,
+            'data': 0,
+            'full_name': get_player_full_name(email)
+        }
+        for match in matches:
+            if against:
+                if match.player1 == email:
+                    goals += match.scores[0].player2
+                    goals += match.scores[1].player2
+                    goals += match.scores[2].player2
+                elif match.player2 == email:
+                    goals += match.scores[0].player1
+                    goals += match.scores[1].player1
+                    goals += match.scores[2].player1
+            elif not against:
+                if match.player1 == email:
+                    goals += match.scores[0].player1
+                    goals += match.scores[1].player1
+                    goals += match.scores[2].player1
+                elif match.player2 == email:
+                    goals += match.scores[0].player2
+                    goals += match.scores[1].player2
+                    goals += match.scores[2].player2
+        new_player["data"] += goals
+        player_goals.append(new_player)
+
+    sorted_players = sorted(player_goals, key=itemgetter('data'))
+
+    if len(sorted_players) < top:
+        top = len(sorted_players)
+
+    return sorted_players[len(sorted_players)-top:]
+
+def get_player_full_name(email):
+    """
+    Returns full name like "first last"
+    """
+    user = PlayerModel.get_by_id(email)
+    return user.first_name + " " + user.last_name
 
 def calc_player_info(player, key):
     """ Returns information for the player viewing page """

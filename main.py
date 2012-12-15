@@ -13,6 +13,7 @@ ROUTES = [
     Route('/compare',       handler='views.compareView'),
     Route('/playerView',    handler='views.playerStatsView'),
     Route('/about',         handler='views.aboutView'),
+    Route('/leaderboard',   handler='views.leaderboardView'),
     SimpleRoute('/.+',      handler='views.errorHandler'),
     ]
 

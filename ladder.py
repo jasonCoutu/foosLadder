@@ -1,11 +1,12 @@
 __author__ = 'VendAsta'
 
 import logging
-import utils
 import datetime
 
 from google.appengine.ext import ndb
 from google.appengine.api import users, mail
+
+import utils
 
 from views import TemplatedView
 from models import PlayerModel, GameModel, MatchModel, skillBase_names
@@ -33,6 +34,8 @@ class ladderView(TemplatedView):
         a.player2 = self.request.POST['player2']
 
         a.scores = utils.calculate_score_from_post(self.request)
+
+        #TODO: Break rest of the score calculation into utils.py
         players = ndb.get_multi([ndb.Key(PlayerModel, a.player1), ndb.Key(PlayerModel, a.player2)])
         p1_total = [a.scores[0].player1, a.scores[1].player1, a.scores[2].player1]
         p2_total = [a.scores[0].player2, a.scores[1].player2, a.scores[2].player2]
@@ -120,6 +123,7 @@ class ladderView(TemplatedView):
         else:
             opponent_email = str(a.player2)
 
+        #TODO: Break email dispatch into utils.py
         message = mail.EmailMessage()
         message.sender = user_email
         message.to = opponent_email
@@ -149,10 +153,10 @@ class ladderView(TemplatedView):
 
         message.send()
 
-        self.get()
+        self.get(success=True)
 
 
-    def get(self):
+    def get(self, success=False):
         players_total, actives = utils.get_ladder()
         user = users.get_current_user()
         players=[]
@@ -160,5 +164,5 @@ class ladderView(TemplatedView):
             players.append((player.key.id(), "%s %s" % (player.first_name, player.last_name), player.skillScore))
         self.render_response('ladder.html',
             players=players,
-            numplayers=players_total.count(), active=actives.count(), user=user)
+            numplayers=players_total.count(), active=actives.count(), user=user, success=success)
 

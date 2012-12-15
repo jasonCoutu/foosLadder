@@ -61,6 +61,20 @@ class errorHandler(TemplatedView):
         self.render_response("error.html", error_message=path)
 
 
+class leaderboardView(TemplatedView):
+
+    def get(self):
+        # get stats
+        highest_goals = player_utils.get_highest_goals()
+        highest_goals_against = player_utils.get_highest_goals(against=True)
+        highest_wins = player_utils.get_most_games(type="wins")
+        highest_games = player_utils.get_most_games()
+        highest_losses = player_utils.get_most_games(type="losses")
+        self.render_response("leaderboard.html", goals=highest_goals,
+            goals_against=highest_goals_against, wins=highest_wins,
+            losses=highest_losses, games=highest_games)
+
+
 class mainView(TemplatedView):
 
     def get(self):
@@ -73,12 +87,13 @@ class mainView(TemplatedView):
                 players_total, actives = utils.get_ladder()
                 user = users.get_current_user()
                 players=[]
+
                 for player in players_total.iter():
                     players.append((player.key.id(), "%s %s" % (player.first_name, player.last_name), player.skillScore))
                 self.render_response('main.html',
                     players=players,
-                    numplayers=players_total.count(), active=actives.count(), user=user,
-                    name=user.nickname())
+                    numplayers=players_total.count(), active=actives.count(),
+                    user=user, name=user.nickname())
             else:
                 table = []
                 for i,j in skillBase_names.iteritems():

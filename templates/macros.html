@@ -69,3 +69,40 @@
     </div>
 </div>
 {%- endmacro %}
+
+{% macro leaderboard(category, heading) -%}
+<table class="table table-bordered">
+    <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>{{ heading }}</th>
+    </tr>
+    {% for user in category|reverse %}
+        <tr>
+            <td>{{ loop.index0 + 1 }}</td>
+            <td>{{ user.full_name }}</td>
+            <td>{{ user.data }}</td>
+        </tr>
+    {% endfor %}
+</table>
+{%- endmacro %}
+
+{% macro print_ladder(numplayers, active, players) -%}
+<table class="table table-bordered">
+    <caption>There are currently {{ numplayers }} players in the ladder, {{ active }}
+        have been active in the past month.<br>
+        <b>Click on a player's name to go to their stats page.</b>
+    </caption>
+  <tr>
+      <th>Name</th>
+      <th>SkillScore</th>
+  </tr>
+{%  for player in players %}
+    <tr>
+        <td><a href="/playerView?key={{ player[0] }}">{{ player[1] }}</a></td>
+
+        <td>{{ player[2] }}</td>
+    </tr>
+{% endfor %}
+</table>
+{%- endmacro %}
