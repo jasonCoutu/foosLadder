@@ -104,6 +104,7 @@ def get_highest_goals(against=False, top=5):
 def get_player_full_name(email):
     """
     Returns full name like "first last"
+    @param email: Email/key of the person who's name you want
     """
     user = PlayerModel.get_by_id(email)
     return user.first_name + " " + user.last_name
@@ -223,4 +224,16 @@ def calc_player_info(player, key):
         elif last_result == "losses":
             final_result = "Currently on a {} game losing streak".format(number_to_word(streak_losses))
 
-    return name, last, skill, total_wins, total_losses, games, win_ratio, last_five_games, final_result
+    player = {
+        "name": name,
+        "last": last,
+        "skill": skill,
+        "wins": total_wins,
+        "losses": total_losses,
+        "games": games,
+        "win_ratio": win_ratio,
+        "last_five_games": last_five_games,
+        "streak": final_result
+    }
+
+    return player

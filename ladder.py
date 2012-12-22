@@ -14,21 +14,6 @@ from models import PlayerModel, GameModel, MatchModel, skillBase_names
 class ladderView(TemplatedView):
 
     def post(self):
-        """
-            formula for scoring:
-                Winner's skill  (ws)
-                Loser's skill   (ls)
-                Base points     (bp)
-                Bonus Points    (pb)
-                Point Diff      (pd)
-
-                wp - lp = bp
-                if bp <20 : bp = 20
-                pb = bp*pd/10
-                ws = ws + bp + pb
-                ls = ls - bp - pb
-        """
-
         a = MatchModel()
         a.player1 = self.request.POST['player1']
         a.player2 = self.request.POST['player2']

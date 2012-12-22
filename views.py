@@ -122,12 +122,6 @@ class newPlayerView(TemplatedView):
             self.render_response('main.html', players=[i for i in a.iter()],
                 numplayers=a.count(), active=b.count(),
                 logout=users.create_logout_url("/"), name=user.nickname())
-            #player = users.get_current_user()
-            #table = []
-            #for i,j in skillBase_names.iteritems():
-            #    table.append([j,i])
-            #table.sort()
-            #self.render_response( 'newPlayer.html', table=table, names=skillBase_names.keys() , keys=skillBase_names.keys(), nick=player.nickname(), playerKey=player.email())
 
     def post(self):
         logging.debug("Starting new Player %s" % self.request.POST["key"] )
@@ -182,12 +176,9 @@ class playerView(TemplatedView):
     def post(self):
         key=ndb.Key(PlayerModel, self.request.POST['selector'])
         a = key.get()
-        name, last, skill, wins, losses, games, win_ratio, last_five_games, \
-            streak = player_utils.calc_player_info(a, key)
+        player = player_utils.calc_player_info(a, key)
         logging.info("Displaying info on %s %s" % (name, last))
-        self.render_response('player.html', name=name, last=last, skill=skill,
-            wins=wins, losses=losses, games=games, win_ratio=win_ratio,
-            last_five_games=last_five_games, streak=streak, key=key.id())
+        self.render_response('player.html', player=player, key=key.id())
 
 class playerStatsView(TemplatedView):
 
@@ -196,18 +187,10 @@ class playerStatsView(TemplatedView):
         if pKey:
             key = ndb.Key(PlayerModel, str(pKey))
             a = key.get()
-            name, last, skill, wins, losses, games, win_ratio, last_five_games,\
-            streak = player_utils.calc_player_info(a, key)
+            player = player_utils.calc_player_info(a, key)
             user = users.get_current_user()
-            logging.info("Displaying info on %s %s" % (name, last))
-            if user:
-                self.render_response('player.html', name=name, last=last, skill=skill,
-                    wins=wins, losses=losses, games=games, win_ratio=win_ratio,
-                    last_five_games=last_five_games, streak=streak, key=pKey, user=user.email())
-            else:
-                self.render_response('player.html', name=name, last=last, skill=skill,
-                    wins=wins, losses=losses, games=games, win_ratio=win_ratio,
-                    last_five_games=last_five_games, streak=streak, key=pKey, user=None)
+            logging.info("Displaying info on %s %s" % (player["name"], player["last"]))
+            self.render_response('player.html', player=player, key=pKey, user=user)
         else:
             self.render_response('error.html', error_message="Player %s does not exist" % pKey)
 
