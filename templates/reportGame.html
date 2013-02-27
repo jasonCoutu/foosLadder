@@ -2,30 +2,34 @@
 {% from 'macros.html' import playerSel %}
 {% from 'macros.html' import playerScore %}
 {% from 'macros.html' import printGames %}
-{% from 'macros.html' import printGamesSlider %}
 
 {% block title %}Report a Game{% endblock %}
-{% block styling_or_scripts %}
-{#    <style type="text/css">#}
-{#        .containing-element .ui-slider-switch { width: 50% }#}
-{#    </style>#}
-{% endblock %}
-{% block heading %}Report a Game{% endblock %}
+
+{% block current_reporter %}class="active"{% endblock %}
+
+{% block heading %}Report your latest game{% endblock %}
+
 {% block page_content %}
-    <div class="centered2">
-<form action="ladder" method="POST">
-  <b>Players</b>
-    <div data-role="controlgroup" class="players">
-        {{   playerSel(user, userKey, 'player1') }}
-        {{   playerSel(names, keys, 'player2') }}
-    </div>
+<form action="ladder" method="POST" class="form-inline">
+<fieldset>
+    <legend>Combatants</legend>
+    <p>Player 1: {{ user[0] }} (you!)</p>
+    <label class="control-label" for="player2">Player 2:</label>
+    {% if key %}
+        {{ playerSel(names, keys, 'player2', oppKey=key) }}
+    {% else %}
+        {{ playerSel(names, keys, 'player2') }}
+    {% endif %}
+    <legend>Games</legend>
     {{ printGames() }}
-<br>
-    <input type="submit" value="Submit Scores!" />
+    <span class="label label-info">Note: Enter 1-3 games inclusive</span>
+</fieldset>
+    <input type="hidden" value="{{ userKey }}" id="player1" name="player1" />
+    <br>
+    <button type="submit" class="btn">Submit scores!</button>
 </form>
-    </div>
 {% endblock %}
-{% block body_scripts %}
+{#{% block body_scripts %}#}
 {#    <script type="text/javascript">#}
 {#        Eventually it'd be nice to think about using this #}
 {#    $(document).bind('pageinit', function(){#}
@@ -55,4 +59,4 @@
 {##}
 {#    });#}
 {#    </script>#}
-{% endblock %}
+{# {% endblock %}#}

@@ -1,36 +1,22 @@
 {% extends "base.html" %}
+{% from 'macros.html' import print_ladder %}
 
 {% block title %}Current Ladder{% endblock %}
 
-{% block heading %}Ladder{% endblock %}
+{% block current_ladder %}class="active"{% endblock %}
+
+{% block heading %}Aim High{% endblock %}
+
 {% block page_content %}
-    <div class="centered2"><p>There are currently {{ numplayers }} players in the ladder, {{ active }}
-        have been active in the past month.</p></div>
-
-<div class="centered2">
-<table class="Players">
-
-  <tr>
-      <th>Name</th>
-      <th>SkillScore</th>
-  </tr>
-{% set odd=True %}
-{%  for player in players %}
-    {% if odd %}
-        <tr>
-        {% set odd=False %}
-    {% else %}
-        <tr class="alt">
-        {% set odd=True %}
-    {% endif %}
-            <td>{{ player.first_name }} {{ player.last_name }}</td>
-            <td>{{ player.skillScore }}</td>
-        </tr>
-{% endfor %}
-</table>
-</div>
-<br />
-{% if user %}
-    <p><a href="/recordGame"><button>Record a Game</button></a></p>
+{% if success %}
+<script type="text/javascript">
+  $.gritter.add({
+    title: "Match entry successful",
+    text: "The match was entered successfully! There was a point change of {{ point_change }} after that match.",
+    image: "/static/img/textured-foosball-ball.png",
+    time: 4000
+  });
+</script>
 {% endif %}
+{{ print_ladder(numplayers, active, players) }}
 {% endblock %}

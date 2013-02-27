@@ -1,41 +1,23 @@
 {% extends "base.html" %}
+{% from 'macros.html' import print_ladder %}
+
 {% block title %}VendAsta Foos Ladder{% endblock %}
 
+{% block styling_or_scripts %}
+
+{% endblock %}
+
+{% block current_home %}class="active"{% endblock %}
+
+{% block heading %}Home Sweet Home{% endblock %}
+
 {% block page_content %}
-    <div class="centered2">Welcome, {{ name }}</div>
+    <p>Welcome, {{ name }}, to the VendAsta Foosball Ladder.</p>
 
-    <div data-role="controlgroup">
-        <a href="/selector" data-role="button" data-icon="search" >Look Up a Player</a>
-{#        <a href="/compare" data-role="button" data-icon="info">Compare Yourself to a Player</a>#}
-        {# Pretty sure this isn't necessary anymore, but leaving it for now #}
-        {#<a href="/ladder"><button>Current Ladder</button></a>#}
-        <a href="/recordGame" data-role="button" data-icon="plus">Record a Game</a>
-    </div>
-    <div class="centered2"><p>There are currently {{ numplayers }} players in the ladder, {{ active }}
-        have been active in the past month.</p></div>
-    <div class="centered2">
-        <table class="Players">
+    <h4>Ladder</h4>
+    {{ print_ladder(numplayers, active, players) }}
+{% endblock %}
 
-            <tr>
-                <th>Name</th>
-                <th>SkillScore</th>
-            </tr>
-            {% set odd=True %}
-            {%  for player in players %}
-                {% if odd %}
-                    <tr>
-                        {% set odd=False %}
-                        {% else %}
-                    <tr class="alt">
-                    {% set odd=True %}
-                {% endif %}
-            <td>{{ player.first_name}} {{player.last_name}}</td>
-            <td> {{player.skillScore}}</td>
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
-    <a href="/settings" data-role="button" data-icon="gear">User Options</a>
-    <a href="{{ logout }}" data-ajax="false" data-role="button" data-icon="alert">Sign out</a>
-    {% block home_button %}{% endblock %}
+{% block body_scripts %}
+
 {% endblock %}

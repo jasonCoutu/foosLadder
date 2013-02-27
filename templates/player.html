@@ -1,18 +1,35 @@
 {% extends "base.html" %}
     {% block title %}
-        Player Lookup - {{ name }} {{ last }}
+        Player Directory
     {% endblock %}
 
-{% block heading %}Player Lookup{% endblock %}
+{% block current_ladder %}active{% endblock %}
+
+{% block heading %}Player Directory{% endblock %}
 {% block page_content %}
-    <div class="centered2">
-    <h1>{{name}} {{last}}</h1>
-    <p>
-        Skill Score: {{ skill }}<br>
-        Games played: {{ games }}<br>
-        Wins/Losses: {{ wins }}/{{ losses }}<br>
-        Win Percentage: {{ win_ratio }}%
-    </p><br>
+    <h3>{{player.name}} {{player.last}}</h3>
+    <div>
+        Skill Score: {{ player.skill }}<br>
+        Games played: {{ player.games }}<br><br>
+        Wins/Losses: {{ player.wins }}/{{ player.losses }}<br>
+        Win Percentage:
+        {% if player.wins == 0 and player.losses == 0 %}
+        - %
+        {% else %}
+        {{ player.win_ratio }}%
+        {% endif %}<br><br>
+        Record over the last
+        {% if not player.last_five_games.total %}one game:
+        {% else %}{{ player.last_five_games.total }} games:
+        {% endif %}
+        {{ player.last_five_games.wins }}-{{ player.last_five_games.losses }}<br><br>
+        {{ player.streak }}
+        <br><br>
+        {% if key and key != user and user %}
+            <a href="/recordGame?oppKey={{ key }}" class="btn">Challenge this person to a game!</a>
+        {% elif key == user %}
+            <p class="text-warning">This is you!</p>
+        {% endif %}
     </div>
-    <a href="selector"><button>Look up another player</button></a>
+
 {% endblock %}

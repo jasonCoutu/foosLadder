@@ -2,11 +2,13 @@
 
 {% block title %}VendAsta Foos Ladder{% endblock %}
 
+{% block current_home %}class="active"{% endblock %}
+
+{% block heading %}VendAsta Foosball Ladder <small>For the people, by the people</small>{% endblock %}
+
 {% block page_content %}
-    <div data-role="controlgroup">
-        <a href="/selector"><button>Look Up a Player</button></a>
-        <a href="/ladder"><button>Current Ladder</button></a>
-    </div>
-    <a href="{{ login }}"><button>Sign In</button></a>
-    {% block home_button %}{% endblock %}
+    <p>Welcome here! Click the buttons along the top to check things out, or click below to sign in.</p>
+    <a class="btn btn-primary" href="{{ login }}">
+        Sign in
+    </a>
 {% endblock %}

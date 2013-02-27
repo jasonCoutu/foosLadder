@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% from "macros.html" import playerSel %}
+
+{% block title %}
+    Match History
+{% endblock %}
+
+{% block current_history %}
+class="active"
+{% endblock %}
+
+{% block styling_or_scripts %}
+<script type="text/javascript" src="http://datatables.net/media/blog/bootstrap/paging.js"></script>
+<style type="text/css">
+table.table thead .sorting,
+table.table thead .sorting_asc,
+table.table thead .sorting_desc,
+table.table thead .sorting_asc_disabled,
+table.table thead .sorting_desc_disabled {
+    cursor: pointer;
+    *cursor: hand;
+}
+ 
+table.table thead .sorting { background: url('/static/img/datatables/sort_both.png') no-repeat center right; }
+table.table thead .sorting_asc { background: url('/static/img/datatables/sort_asc.png') no-repeat center right; }
+table.table thead .sorting_desc { background: url('/static/img/datatables/sort_desc.png') no-repeat center right; }
+ 
+table.table thead .sorting_asc_disabled { background: url('/static/img/datatables/sort_asc_disabled.png') no-repeat center right; }
+table.table thead .sorting_desc_disabled { background: url('/static/img/datatables/sort_desc_disabled.png') no-repeat center right; }
+</style>
+{% endblock %}
+
+{% block heading %}
+    Match History
+{% endblock %}
+
+{% block page_content %}
+    <div class="input-append">
+        {{ playerSel(names, keys) }}
+        <button style="margin-left: 0.25px" id="btnSubmit" onclick="newPerson()" class="btn">Submit</button>
+    </div>
+    <br />
+
+    <div id="whereItGoes">
+
+    </div>
+{% endblock %}
+
+{% block body_scripts %}
+    <script type="text/javascript">
+        var newPerson = function()
+        {
+            var $contentDiv = $("#whereItGoes");
+            var $submitBtn = $("#btnSubmit");
+            $contentDiv.html("<div class='loading'>Gathering yarn, this could take a minute <br /><img id='kitty' src='/static/img/loading.gif' /></div>");
+            $submitBtn.attr("disabled", true);
+            var $name = $("#selector").val();
+            $.ajax({
+                url: "/matchHistoryCalc?email=" + $name,
+                type: "GET",
+                success: function(history_json){
+                    $(".loading").remove();
+                    $(".history").remove();
+                    // Do something with the returned json
+                    $contentDiv.html('<table cellpadding="0" cellspacing="0" border="0" class="table table-bordered" id="matches"></table>');
+                    var aData = jQuery.parseJSON(history_json);
+                    $submitBtn.removeAttr("disabled");
+                    $("#matches").dataTable({
+                        "aaData": aData,
+                        "sPaginationType": "bootstrap",
+                        "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
+                        "aaSorting" : [[ 1, "asc" ]],
+                        "aoColumns": [
+                            { "sTitle" : "Game #" },
+                            { "sTitle" : "Date" },
+                            { "sTitle" : "Winner?",
+                              "fnRender": function(obj) {
+                                // Get the current piece of data for this column
+                                var sReturn = obj.aData[ obj.iDataColumn ];
+                                if ( sReturn == true ) 
+                                {
+                                    sReturn = "Yes!";
+                                }
+                                else
+                                {
+                                    sReturn = "No";
+                                }
+                                return sReturn;
+                            }},
+                            { "sTitle" : "Scores" },
+                            { "sTitle" : "Reporter" },
+                            { "sTitle" : "Opponent" }
+                        ],
+                    });
+                    $.extend( $.fn.dataTableExt.oStdClasses, {
+                        "sWrapper": "dataTables_wrapper form-inline"
+                    } );
+                }
+            });
+            return false;
+        }
+    </script>
+{% endblock %}

@@ -5,6 +5,7 @@ from models import PlayerModel, GameModel
 PLAYER_A = 1
 PLAYER_B = 2
 
+#TODO: use this http://elo.divergentinformatics.com/ (or something like it)
 def calculate_elo_rank(player_a_rank=1600, player_b_rank=1600, winner=PLAYER_A, penalize_loser=True):
     if winner is PLAYER_A:
         winner_rank, loser_rank = player_a_rank, player_b_rank
@@ -19,8 +20,10 @@ def calculate_elo_rank(player_a_rank=1600, player_b_rank=1600, winner=PLAYER_A, 
         k = 24
     else:
         k = 16
+    # Triple the points baby (doesn't really work)
     new_winner_rank = round(winner_rank + (k * (1 - odds)))
     if penalize_loser:
+        # Triple the points baby (doesn't really work)
         new_rank_diff = new_winner_rank - winner_rank
         new_loser_rank = loser_rank - new_rank_diff
     else:
@@ -37,6 +40,7 @@ def get_ladder():
     import datetime
     a=PlayerModel.query()
     a=a.order(-PlayerModel.skillScore)
+
     b=PlayerModel.query()
     lastweek = datetime.datetime.now() - datetime.timedelta(days=7)
     b=b.filter(PlayerModel.lastGame > lastweek)
@@ -83,6 +87,35 @@ def calculate_score_from_post(request):
 
     #name=a.first_name, last=a.last_name,skill=a.skillScore, wins=a.gamesWon, loses=(a.gamesPlayed - a.gamesWon)
 
-def calculate_winner():
-    #TODO: Pull out the win calculation logic from ladder.py and put it here
-    pass
+def calculate_winner(p1_score, p2_score):
+    if p1_score > p2_score:
+        return "player1"
+    elif p2_score > p1_score:
+        return "player2"
+    else:
+        return "tied"
+
+def number_to_word(number):
+    if number > 9 or number < 0:
+        return number
+    else:
+        if number == 0:
+            return "zero"
+        elif number == 1:
+            return "one"
+        elif number == 2:
+            return "two"
+        elif number == 3:
+            return "three"
+        elif number == 4:
+            return "four"
+        elif number == 5:
+            return "five"
+        elif number == 6:
+            return "six"
+        elif number == 7:
+            return "seven"
+        elif number == 8:
+            return "eight"
+        elif number == 9:
+            return "nine"

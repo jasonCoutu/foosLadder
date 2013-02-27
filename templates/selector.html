@@ -1,14 +1,27 @@
 {% extends "base.html" %}
 
-{% block title %}Foosball Ladder - Player Selector{% endblock %}
+{% block title %}Player Directory{% endblock %}
 
 {%  from 'macros.html' import playerSel %}
 
-{% block heading %}Foos Player Selector{% endblock %}
+{% block current_selector %}class="active"{% endblock %}
+
+{% block heading %}Player Directory{% endblock %}
 
 {% block page_content %}
-<form action="/player" method="POST">
-    {{   playerSel(names, keys) }}
-    <input type="submit" value="Look at this player" />
-</form>
+    <div>
+        <p>Use this directory to look up stats on your opponents, including:</p>
+        <ul>
+            <li>Wins and losses</li>
+            <li>Current streak</li>
+            <li>Record over the last five games</li>
+            <li>Win percentage</li>
+        </ul>
+    </div>
+    <form action="/player" method="POST">
+        <label for="selector">Select a player:</label>
+        {{   playerSel(names, keys) }}
+        <br>
+        <button type="submit" class="btn">Check it!</button>
+    </form>
 {% endblock %}

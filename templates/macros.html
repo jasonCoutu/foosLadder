@@ -1,18 +1,13 @@
 
-{% macro playerSel(names, keys, name='selector') -%}
+{% macro playerSel(names, keys, name='selector', oppKey="none") -%}
 <select id={{ name }} name={{ name }}>
     {% for key in keys %}
-        {# Trying to have it NOT print your name in the opponents box, #}
-        {# since that doesn't really make sense #}
-{#        {{ key }} {{ userKey }}#}
-{#        {% if key != userKey %}#}
-        {% if keys|count() == 1 %}
+        {% if oppKey == key %}
             <option selected="selected" value="{{ key }}">{{names[loop.index0]}}</option>
         {% else %}
             <option value="{{ key }}">{{names[loop.index0]}}</option>
         {% endif %}
     {% endfor %}
-
 </select>
 {%- endmacro %}
 
@@ -27,8 +22,8 @@
 {%- endmacro %}
 
 {% macro playerScore( name='p1g1') -%}
-<select name={{ name }} id={{ name }}>
-    {% for key in '012345'%}
+<select name={{ name }} id={{ name }} class="input-small">
+    {% for key in '012345' %}
         <option value="{{ key }}">{{key}}</option>
     {% endfor %}
 
@@ -36,37 +31,78 @@
 {%- endmacro %}
 
 {% macro printGames() -%}
-    <b>Game 1</b>
-    <div data-role="controlgroup">
+<div class="control-group">
+    <label class="control-label">Game 1</label>
+    <div class="controls">
         {{   playerScore('p1g1') }}
         {{   playerScore('p2g1') }}
     </div>
-    <b>Game 2</b>
-    <div data-role="controlgroup">
+    <label class="control-label">Game 2</label>
+    <div class="controls">
         {{   playerScore('p1g2') }}
         {{   playerScore('p2g2') }}
     </div>
-    <b>Game 3</b>
-    <div data-role="controlgroup">
+    <label class="control-label">Game 3</label>
+    <div class="controls">
         {{   playerScore('p1g3') }}
         {{   playerScore('p2g3') }}
     </div>
+</div>
 {%- endmacro %}
 
-{% macro printGamesSlider(player1="Player 1", player2="Player 2") -%}
-    <label for="game1">Game 1</label>
-    <select data-role="slider" id="game1">
-        <option class="player1" value="{{ player1 }}" selected="selected">{{ player1 }}</option>
-        <option class="player2" value="{{ player2 }}">{{ player2 }}</option>
-    </select>
-    <label for="game2">Game 2</label>
-    <select data-role="slider" id="game2">
-        <option class="player1" value="{{ player1 }}" selected="selected">{{ player1 }}</option>
-        <option class="player2" value="{{ player2 }}">{{ player2 }}</option>
-    </select>
-    <label for="game3">Game 3</label>
-    <select data-role="slider" id="game3">
-        <option class="player1" value="{{ player1 }}" selected="selected">{{ player1 }}</option>
-        <option class="player2" value="{{ player2 }}">{{ player2 }}</option>
-    </select>
+{% macro printGamesFluid() -%}
+<div class="control-group">
+    <label class="control-label">Game 1</label>
+    <div class="controls">
+        {{   playerScore('p1g1') }}
+        {{   playerScore('p2g1') }}
+    </div>
+    <label class="control-label">Game 2</label>
+    <div class="controls">
+        {{   playerScore('p1g2') }}
+        {{   playerScore('p2g2') }}
+    </div>
+    <label class="control-label">Game 3</label>
+    <div class="controls">
+        {{   playerScore('p1g3') }}
+        {{   playerScore('p2g3') }}
+    </div>
+</div>
+{%- endmacro %}
+
+{% macro leaderboard(category, heading) -%}
+<table class="table table-bordered">
+    <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>{{ heading }}</th>
+    </tr>
+    {% for user in category|reverse %}
+        <tr>
+            <td>{{ loop.index0 + 1 }}</td>
+            <td>{{ user.full_name }}</td>
+            <td>{{ user.data }}</td>
+        </tr>
+    {% endfor %}
+</table>
+{%- endmacro %}
+
+{% macro print_ladder(numplayers, active, players) -%}
+<table class="table table-bordered">
+    <caption>There are currently {{ numplayers }} players in the ladder,
+        {{ active }} have been active in the past month.<br>
+        <b>Click on a player's name to go to their stats page.</b>
+    </caption>
+  <tr>
+      <th>Name</th>
+      <th>SkillScore</th>
+  </tr>
+{%  for player in players %}
+    <tr>
+        <td><a href="/playerView?key={{ player[0] }}">{{ player[1] }}</a></td>
+
+        <td>{{ player[2] }}</td>
+    </tr>
+{% endfor %}
+</table>
 {%- endmacro %}

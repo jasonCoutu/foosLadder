@@ -6,18 +6,35 @@
 
 {% block heading %}New Player Entry Form{% endblock %}
 {% block page_content %}
-<form title="newPlayer" action="/newPlayer" method="POST">
-    <label for="fname" class="ui-hidden-accessible">First Name:</label><input name="fname" id="fname" required placeholder="First name" />
-    <label for="lname" class="ui-hidden-accessible">Last Name:</label><input name="lname" id="lname" required placeholder="Last name" />
-    <input type="hidden" name="key" value="{{ playerKey }}" readonly="True"/>
-    <fieldset data-role="field-contain">
-        Skill - Points:{{ rankingsSel(keys, keyVals, 'skillBaseVal') }}
-        If you aren't sure where you should be as far as points go, keep in mind
-        that in general, 1000 is considered a bright beginner. You can also take a
-        look at the current ladder and see where you fit in.
+<form title="newPlayer" action="/newPlayer" method="POST" class="form-horizontal">
+    <fieldset>
+        <div class="control-group">
+            <label class="control-label" for="fname">First Name:</label>
+            <div class="controls">
+                <input name="fname" id="fname" required />
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="lname">Last Name:</label>
+            <div class="controls">
+                <input name="lname" id="lname" required />
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="skillBaseVal">Skill - Points:</label>
+            <div class="controls">
+                {{ rankingsSel(keys, keyVals, 'skillBaseVal') }}
+            </div>
+        </div>
+
+        <input type="hidden" name="key" value="{{ playerKey }}" readonly="True"/>
+        <button type="submit" class="btn btn-large">Submit</button>
     </fieldset>
-<div class="centered2">
-    <table class="Players">
+</form>
+    <div class="alert alert-info">If you aren't sure where you should be as far as points go, keep in mind
+        that in general, 1000 is considered a bright beginner. You can also take a
+        look at the current ladder and see where you fit in.</div>
+    <table class="table table-striped">
         <tr>
             <th>Name</th>
             <th>SkillScore</th>
@@ -26,8 +43,8 @@
         {%  for player in players %}
             {% if odd %}
                 <tr>
-                {% set odd=False %}
-            {% else %}
+                    {% set odd=False %}
+                    {% else %}
                 <tr class="alt">
                 {% set odd=True %}
             {% endif %}
@@ -36,8 +53,4 @@
         </tr>
         {% endfor %}
     </table>
-</div>
-    <input data-icon="check" type="submit" value="Submit"/>
-</form>
-    {% block home_button %}{% endblock %}
 {% endblock %}
