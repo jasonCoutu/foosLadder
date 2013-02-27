@@ -20,8 +20,10 @@ def calculate_elo_rank(player_a_rank=1600, player_b_rank=1600, winner=PLAYER_A, 
         k = 24
     else:
         k = 16
+    # Triple the points baby (doesn't really work)
     new_winner_rank = round(winner_rank + (k * (1 - odds)))
     if penalize_loser:
+        # Triple the points baby (doesn't really work)
         new_rank_diff = new_winner_rank - winner_rank
         new_loser_rank = loser_rank - new_rank_diff
     else:

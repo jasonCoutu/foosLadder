@@ -23,22 +23,22 @@
         </form>
     {% endif %}
     <hr>
-    <h3>{{name}} {{last}}</h3>
+    <h3>{{player.name}} {{player.last}}</h3>
     <p>
-        Skill Score: {{ skill }}<br>
-        Games played: {{ games }}<br><br>
-        Wins/Losses: {{ wins }}/{{ losses }}<br>
+        Skill Score: {{ player.skill }}<br>
+        Games played: {{ player.games }}<br><br>
+        Wins/Losses: {{ player.wins }}/{{ player.losses }}<br>
         Win Percentage:
-        {% if wins == 0 and losses == 0 %}
+        {% if player.wins == 0 and player.losses == 0 %}
             - %
         {% else %}
-            {{ win_ratio }}%
+            {{ player.win_ratio }}%
         {% endif %}<br><br>
         Record over the last
-        {% if not last_five_games.total %}one game:
-            {% else %}{{ last_five_games.total }} games:
+        {% if not player.last_five_games.total %}one game:
+            {% else %}{{ player.last_five_games.total }} games:
         {% endif %}
-        {{ last_five_games.wins }}-{{ last_five_games.losses }}<br><br>
+        {{ player.last_five_games.wins }}-{{ player.last_five_games.losses }}<br><br>
         {{ streak }}
     </p>
     <button onclick="javascript:alert('Coming sometime!')" class="btn btn-danger">Reset stats?</button>

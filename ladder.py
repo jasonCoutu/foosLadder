@@ -67,6 +67,9 @@ class ladderView(TemplatedView):
         winnerRank, loserRank  = utils.calculate_elo_rank(winner.skillScore,
                                                           loser.skillScore)
 
+        # Try returning the point change for some interesting data
+        point_change = int(winnerRank - winner.skillScore)
+
         logging.info("%s %s's rank is now %d, a change of %d points" %
                      (winner.first_name, winner.last_name, winnerRank,
                       winnerRank - winner.skillScore))
@@ -138,10 +141,10 @@ class ladderView(TemplatedView):
 
         message.send()
 
-        self.get(success=True)
+        self.get(success=True, point_change=point_change)
 
 
-    def get(self, success=False):
+    def get(self, **kwargs):
         players_total, actives = utils.get_ladder()
         user = users.get_current_user()
         players=[]
@@ -149,5 +152,5 @@ class ladderView(TemplatedView):
             players.append((player.key.id(), "%s %s" % (player.first_name, player.last_name), player.skillScore))
         self.render_response('ladder.html',
             players=players,
-            numplayers=players_total.count(), active=actives.count(), user=user, success=success)
-
+            numplayers=players_total.count(), active=actives.count(), user=user, success=kwargs.get("success"),
+            point_change=kwargs.get("point_change"))

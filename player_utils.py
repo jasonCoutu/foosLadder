@@ -225,6 +225,7 @@ def calc_player_info(player, key):
             final_result = "Currently on a {} game losing streak".format(number_to_word(streak_losses))
 
     player = {
+        "email": email,
         "name": name,
         "last": last,
         "skill": skill,
@@ -237,3 +238,53 @@ def calc_player_info(player, key):
     }
 
     return player
+
+def match_history(email):
+    """
+
+    """
+    qry = MatchModel.query(ndb.OR(MatchModel.player1 == email,
+        MatchModel.player2 == email))
+    match_results = qry.order(-MatchModel.gameDate).fetch()
+
+    history = []
+
+    count = 0
+
+    for result in match_results:
+        count += 1
+        wins = 0
+        losses = 0
+        for i in range(0, len(result.scores)):
+            winner = calculate_winner(result.scores[i].player1, result.scores[i].player2)
+            if winner == "player1":
+                if result.player1 == email:
+                    wins += 1
+                elif result.player2 == email:
+                    losses += 1
+            elif winner == "player2":
+                if result.player1 == email:
+                    losses += 1
+                elif result.player2 == email:
+                    wins += 1
+
+        if result.player1 == email:
+            scores = str(result.scores[0].player1) + "-" + str(result.scores[0].player2) + ", " \
+                + str(result.scores[1].player1) + "-" + str(result.scores[1].player2) + ", " \
+                + str(result.scores[2].player1) + "-" + str(result.scores[2].player2)
+        else:
+            scores = str(result.scores[0].player2) + "-" + str(result.scores[0].player1) + ", " \
+                + str(result.scores[1].player2) + "-" + str(result.scores[1].player1) + ", " \
+                + str(result.scores[2].player2) + "-" + str(result.scores[2].player1)
+
+        if wins > losses:
+
+            history.append([count, str(result.gameDate.strftime('%h %d, %Y @ %I:%S')), \
+                True, scores, get_player_full_name(result.player1), \
+                get_player_full_name(result.player2)])
+        elif losses > wins:
+            history.append([count, str(result.gameDate.strftime('%h %d, %Y @ %I:%S')), \
+                False, scores, get_player_full_name(result.player1), \
+                get_player_full_name(result.player2)])
+
+    return history

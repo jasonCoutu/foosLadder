@@ -3,10 +3,10 @@ import logging
 from google.appengine.ext import ndb
 from google.appengine.ext.db import Model
 from google.appengine.api import users
-from google.appengine.ext.webapp._webapp25 import RequestHandler
 from webapp2 import RequestHandler, cached_property
 from webapp2_extras import jinja2
 
+import json
 import utils
 import player_utils
 from models import PlayerModel, GameModel, MatchModel, skillBase_names
@@ -111,6 +111,29 @@ class mainView(TemplatedView):
             self.render_response('main2.html', login=users.create_login_url('/'))
 
 
+class matchHistoryCalc(TemplatedView):
+
+    def get(self):
+        from player_utils import match_history
+        email = self.request.GET["email"]
+        returnData = match_history(email)
+        self.response.out.write(json.dumps(returnData))
+
+
+class matchHistoryView(TemplatedView):
+
+    def get(self):
+        user = users.get_current_user()
+        a = PlayerModel.query()
+        name_list = dict([(i.key.id(), "%s %s" % (i.first_name, i.last_name) ) for i in a.iter()])
+        self.render_response("matchhistory.html", user=user, names=name_list.values(), keys=name_list.keys())
+
+    def post(self, *args):
+        arg_list = args
+        name = self.request.POST
+        self.render_response("matchhistory.html", selected=True, arglist=arg_list)
+
+
 class newPlayerView(TemplatedView):
 
     def get(self):
@@ -177,7 +200,7 @@ class playerView(TemplatedView):
         key=ndb.Key(PlayerModel, self.request.POST['selector'])
         a = key.get()
         player = player_utils.calc_player_info(a, key)
-        logging.info("Displaying info on %s %s" % (name, last))
+        logging.info("Displaying info on %s %s" % (player["name"], player["last"]))
         self.render_response('player.html', player=player, key=key.id())
 
 class playerStatsView(TemplatedView):
@@ -204,14 +227,19 @@ class reportView(TemplatedView):
         #        logging.info(name_list)
         #        logging.info("::::")
         user = users.get_current_user()
-        try:
-            oppKey = self.request.GET["oppKey"]
-            self.render_response('reportGame.html',
-                user=[name_list[user.email()], ], userKey=user.email(),
-                names=name_list.values(), keys=name_list.keys(), key=oppKey)
-        except KeyError:
-            self.render_response('reportGame.html', user=[name_list[user.email()], ],
-                userKey=user.email() , names=name_list.values(), keys=name_list.keys())
+        # If they're logged in, let them report a game
+        if user:
+            try:
+                oppKey = self.request.GET["oppKey"]
+                self.render_response('reportGame.html',
+                    user=[name_list[user.email()], ], userKey=user.email(),
+                    names=name_list.values(), keys=name_list.keys(), key=oppKey)
+            except KeyError:
+                self.render_response('reportGame.html', user=[name_list[user.email()], ],
+                    userKey=user.email() , names=name_list.values(), keys=name_list.keys())
+        # If they are not logged in, show the "not logged in" front page
+        else:
+            self.render_response('main2.html', login=users.create_login_url('/'))
 
 
 class selectorView(TemplatedView):
@@ -229,11 +257,8 @@ class settingsView(TemplatedView):
         if user is not None:
             key = ndb.Key(PlayerModel, user.email())
             a = key.get()
-            name, last, skill, wins, losses, games, win_ratio, last_five_games,\
-            streak = player_utils.calc_player_info(a, key)
-            self.render_response("settings.html", user=a, key=user.email(), name=name, last=last, skill=skill,
-                          wins=wins, losses=losses, games=games, win_ratio=win_ratio,
-                           last_five_games=last_five_games, streak=streak,form_success=form_success)
+            player = player_utils.calc_player_info(a, key)
+            self.render_response("settings.html", user=a, key=player["email"], player=player, form_success=form_success)
         else:
             self.render_response("error.html", error_message=user)
 
