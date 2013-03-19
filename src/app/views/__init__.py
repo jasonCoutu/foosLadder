@@ -1,15 +1,15 @@
 import logging
 
-from google.appengine.ext import ndb
-from google.appengine.ext.db import Model
 from google.appengine.api import users
 from webapp2 import RequestHandler, cached_property
 from webapp2_extras import jinja2
 
 import json
-import utils
-import player_utils
-from models import PlayerModel, GameModel, MatchModel, skillBase_names
+import app.utils as utils
+import app.utils.player_utils as player_utils
+import app.domain.player as player
+from domain import skillBase_names
+from models import GameModel, MatchModel
 
 
 class TemplatedView(RequestHandler):
@@ -41,16 +41,16 @@ class compareView(TemplatedView):
 
     def get(self):
         user = users.get_current_user()
-        a = PlayerModel.query()
+        a = player.get_entities()
         name_list = dict([(i.key.id(), "%s %s" % (i.first_name, i.last_name) ) for i in a.iter()])
         self.render_response("compare.html", user=user, names=name_list.values(), keys=name_list.keys())
 
     def post(self):
-        key = ndb.Key(PlayerModel, self.request.POST['selector'])
-        a = key.get()
+        player_key = player.get_key(self.request.POST['selector'])
         user = self.request.POST["user"]
-        stats = player_utils.compare_players(a, user)
+        stats = player_utils.compare_players(player_key, user)
 
+        # unused
         self.render_response('player.html', )
 
 
@@ -71,52 +71,58 @@ class leaderboardView(TemplatedView):
         highest_games = player_utils.get_most_games()
         highest_losses = player_utils.get_most_games(type="losses")
         self.render_response("leaderboard.html", goals=highest_goals,
-            goals_against=highest_goals_against, wins=highest_wins,
-            losses=highest_losses, games=highest_games)
+                             goals_against=highest_goals_against, wins=highest_wins,
+                             losses=highest_losses, games=highest_games)
 
 
 class mainView(TemplatedView):
 
     def get(self):
-        user=users.get_current_user()
+        user = users.get_current_user()
         if user:
-            key = ndb.Key(PlayerModel, user.email())
-            #a = PlayerModel(key=key)
-            a = key.get()
+            a = player.get_by_key(user.email())
             if a:
                 players_total, actives = utils.get_ladder()
                 user = users.get_current_user()
-                players=[]
+                player_list = []
 
-                for player in players_total.iter():
-                    players.append((player.key.id(), "%s %s" % (player.first_name, player.last_name), player.skillScore))
+                for players in players_total.iter():
+                    player_list.append((players.key.id(),
+                                        "%s %s" % (players.first_name,
+                                                   players.last_name),
+                                        players.skillScore))
                 self.render_response('main.html',
-                    players=players,
-                    numplayers=players_total.count(), active=actives.count(),
-                    user=user, name=user.nickname())
+                                     players=player_list,
+                                     numplayers=players_total.count(),
+                                     active=actives.count(),
+                                     user=user, name=user.nickname())
             else:
                 table = []
-                for i,j in skillBase_names.iteritems():
-                    table.append([j,i])
+                for i, j in skillBase_names.iteritems():
+                    table.append([j, i])
                 sorted(table, key=lambda tables: tables[0], reverse=True)
                 a, b = utils.get_ladder()
 
                 self.render_response('newPlayer.html',
-                    names=skillBase_names.keys() , keys=skillBase_names.keys(),
-                    keyVals=table,
-                    nick=user.nickname(), playerKey=user.email(),
-                    players=[i for i in a.iter()],
-                    numplayers=a.count(), active=b.count(),new=True)
+                                     names=skillBase_names.keys(),
+                                     keys=skillBase_names.keys(),
+                                     keyVals=table,
+                                     nick=user.nickname(),
+                                     playerKey=user.email(),
+                                     players=[i for i in a.iter()],
+                                     numplayers=a.count(),
+                                     active=b.count(),
+                                     new=True)
         else:
-            self.render_response('main2.html', login=users.create_login_url('/'))
+            self.render_response('main2.html',
+                                 login=users.create_login_url('/'))
 
 
 class matchHistoryCalc(TemplatedView):
 
     def get(self):
-        from player_utils import match_history
         email = self.request.GET["email"]
-        returnData = match_history(email)
+        returnData = player_utils.match_history(email)
         self.response.out.write(json.dumps(returnData))
 
 
@@ -124,67 +130,74 @@ class matchHistoryView(TemplatedView):
 
     def get(self):
         user = users.get_current_user()
-        a = PlayerModel.query()
-        name_list = dict([(i.key.id(), "%s %s" % (i.first_name, i.last_name) ) for i in a.iter()])
-        self.render_response("matchhistory.html", user=user, names=name_list.values(), keys=name_list.keys())
+        a = player.get_entities()
+        name_list = dict([(i.key.id(),
+                           "%s %s" % (i.first_name, i.last_name))
+                          for i in a.iter()])
+        self.render_response("matchhistory.html",
+                             user=user,
+                             names=name_list.values(),
+                             keys=name_list.keys())
 
     def post(self, *args):
         arg_list = args
         name = self.request.POST
-        self.render_response("matchhistory.html", selected=True, arglist=arg_list)
+        self.render_response("matchhistory.html",
+                             selected=True,
+                             arglist=arg_list)
 
 
 class newPlayerView(TemplatedView):
 
     def get(self):
-        user=users.get_current_user()
-        key = ndb.Key(PlayerModel, user.email() )
-        a = key.get()
+        user = users.get_current_user()
+        a = player.get_by_key(user.email())
         if a:
             a, b = utils.get_ladder()
-            self.render_response('main.html', players=[i for i in a.iter()],
-                numplayers=a.count(), active=b.count(),
-                logout=users.create_logout_url("/"), name=user.nickname())
+            self.render_response('main.html',
+                                 players=[i for i in a.iter()],
+                                 numplayers=a.count(),
+                                 active=b.count(),
+                                 logout=users.create_logout_url("/"),
+                                 name=user.nickname())
 
     def post(self):
-        logging.debug("Starting new Player %s" % self.request.POST["key"] )
-        key=""
-        lname=""
-        fname=""
-        won=0
-        played=0
-        sscore=0
+        logging.debug("Starting new Player %s" % self.request.POST["key"])
+        key = ""
+        lname = ""
+        fname = ""
+        won = 0
+        played = 0
+        sscore = 0
         if "key" in self.request.POST.keys():
-            key= self.request.POST["key"]
+            key = self.request.POST["key"]
         elif "skillBaseVal" in self.request.POST.keys():
-            key= self.request.POST["skillBaseVal"]
+            key = self.request.POST["skillBaseVal"]
         else:
             return None
         if "fname" in self.request.POST.keys():
-            fname= self.request.POST["fname"]
+            fname = self.request.POST["fname"]
         else:
             return None
         if "lname" in self.request.POST.keys():
-            lname= self.request.POST["lname"]
+            lname = self.request.POST["lname"]
         else:
             return None
         if "won" in self.request.POST.keys():
-            won= int(self.request.POST["won"])
+            won = int(self.request.POST["won"])
         if "played" in self.request.POST.keys():
-            played=int( self.request.POST["played"])
+            played = int( self.request.POST["played"])
         if "score" in self.request.POST.keys():
-            sscore=int( self.request.POST["score"])
+            sscore = int( self.request.POST["score"])
 
-        keys = [ndb.Key(PlayerModel, key )]
-
-        a = PlayerModel(key=keys[0])
+        a = player.get_by_key(key)
         a.skillBase = self.request.POST['skillBaseVal']
         a.first_name = fname
         a.last_name = lname
         a.gamesPlayed = played
         a.gamesWon = won
         a.skillScore = int(skillBase_names[a.skillBase])
-        logging.debug("Putting new Player %s" % key )
+        logging.debug("Putting new Player %s" % key)
         a.put()
         self.redirect("/")
 
@@ -202,6 +215,7 @@ class playerView(TemplatedView):
         player = player_utils.calc_player_info(a, key)
         logging.info("Displaying info on %s %s" % (player["name"], player["last"]))
         self.render_response('player.html', player=player, key=key.id())
+
 
 class playerStatsView(TemplatedView):
 
@@ -232,11 +246,11 @@ class reportView(TemplatedView):
             try:
                 oppKey = self.request.GET["oppKey"]
                 self.render_response('reportGame.html',
-                    user=[name_list[user.email()], ], userKey=user.email(),
-                    names=name_list.values(), keys=name_list.keys(), key=oppKey)
+                                     user=[name_list[user.email()], ], userKey=user.email(),
+                                     names=name_list.values(), keys=name_list.keys(), key=oppKey)
             except KeyError:
                 self.render_response('reportGame.html', user=[name_list[user.email()], ],
-                    userKey=user.email() , names=name_list.values(), keys=name_list.keys())
+                                     userKey=user.email() , names=name_list.values(), keys=name_list.keys())
         # If they are not logged in, show the "not logged in" front page
         else:
             self.render_response('main2.html', login=users.create_login_url('/'))

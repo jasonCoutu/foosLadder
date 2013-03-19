@@ -18,7 +18,7 @@ skillBase_names = {"Senior Master": 2400,
 
 
 class PlayerModel(ndb.Model):
-    
+
     first_name = ndb.StringProperty(required=True)
     last_name = ndb.StringProperty(required=True)
     gamesPlayed = ndb.IntegerProperty(default=0)
