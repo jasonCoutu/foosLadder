@@ -1,5 +1,4 @@
 import os
-# import set_sys_path
 
 from webapp2 import WSGIApplication, Route, SimpleRoute
 
