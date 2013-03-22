@@ -8,8 +8,8 @@ import json
 import app.utils as utils
 import app.utils.player_utils as player_utils
 import app.domain.player as player
-from domain import skillBase_names
-from models import GameModel, MatchModel
+from app.domain import skillBase_names as skillBase_function
+from app.models import GameModel, MatchModel
 
 
 class TemplatedView(RequestHandler):
@@ -71,7 +71,8 @@ class leaderboardView(TemplatedView):
         highest_games = player_utils.get_most_games()
         highest_losses = player_utils.get_most_games(type="losses")
         self.render_response("leaderboard.html", goals=highest_goals,
-                             goals_against=highest_goals_against, wins=highest_wins,
+                             goals_against=highest_goals_against,
+                             wins=highest_wins,
                              losses=highest_losses, games=highest_games)
 
 
@@ -97,6 +98,7 @@ class mainView(TemplatedView):
                                      active=actives.count(),
                                      user=user, name=user.nickname())
             else:
+                skillBase_names = skillBase_function()
                 table = []
                 for i, j in skillBase_names.iteritems():
                     table.append([j, i])
@@ -163,9 +165,6 @@ class newPlayerView(TemplatedView):
 
     def post(self):
         logging.debug("Starting new Player %s" % self.request.POST["key"])
-        key = ""
-        lname = ""
-        fname = ""
         won = 0
         played = 0
         sscore = 0
@@ -186,35 +185,36 @@ class newPlayerView(TemplatedView):
         if "won" in self.request.POST.keys():
             won = int(self.request.POST["won"])
         if "played" in self.request.POST.keys():
-            played = int( self.request.POST["played"])
+            played = int(self.request.POST["played"])
         if "score" in self.request.POST.keys():
-            sscore = int( self.request.POST["score"])
+            score = int(self.request.POST["score"])
 
-        a = player.get_by_key(key)
-        a.skillBase = self.request.POST['skillBaseVal']
-        a.first_name = fname
-        a.last_name = lname
-        a.gamesPlayed = played
-        a.gamesWon = won
-        a.skillScore = int(skillBase_names[a.skillBase])
+        a = dict()
+        a["skillBase"] = self.request.POST['skillBaseVal']
+        a["first_name"] = fname
+        a["last_name"] = lname
+        a["gamesPlayed"] = played
+        a["gamesWon"] = won
+        a["skillScore"] = int(skillBase_function()[a["skillBase"]])
         logging.debug("Putting new Player %s" % key)
-        a.put()
+        player.new_player(**a)
         self.redirect("/")
 
 
 class playerView(TemplatedView):
 
     def get(self):
-        a = PlayerModel.query()
+        a = player.get_entities()
         name_list = dict([(i.key.id(), "%s %s" % (i.first_name, i.last_name) ) for i in a.iter()])
         self.render_response("selector.html", names=name_list.values(), keys=name_list.keys())
 
     def post(self):
-        key=ndb.Key(PlayerModel, self.request.POST['selector'])
-        a = key.get()
-        player = player_utils.calc_player_info(a, key)
-        logging.info("Displaying info on %s %s" % (player["name"], player["last"]))
-        self.render_response('player.html', player=player, key=key.id())
+        a = player.get_by_key(self.request.POST['selector'])
+        key = player.get_key(self.request.POST['selector'])
+        one_player = player_utils.calc_player_info(a, key)
+        logging.info("Displaying info on %s %s" % (one_player["name"],
+                                                   one_player["last"]))
+        self.render_response('player.html', player=one_player, key=key.id())
 
 
 class playerStatsView(TemplatedView):
@@ -222,22 +222,27 @@ class playerStatsView(TemplatedView):
     def get(self):
         pKey = self.request.GET["key"]
         if pKey:
-            key = ndb.Key(PlayerModel, str(pKey))
-            a = key.get()
-            player = player_utils.calc_player_info(a, key)
+            key = player.get_key(str(pKey))
+            a = player.get_by_key(str(pKey))
+            one_player = player_utils.calc_player_info(a, key)
             user = users.get_current_user()
-            logging.info("Displaying info on %s %s" % (player["name"], player["last"]))
-            self.render_response('player.html', player=player, key=pKey, user=user)
+            logging.info("Displaying info on %s %s" % (one_player["name"],
+                                                       one_player["last"]))
+            self.render_response('player.html', player=one_player, key=pKey,
+                                 user=user)
         else:
-            self.render_response('error.html', error_message="Player %s does not exist" % pKey)
+            self.render_response('error.html',
+                                 error_message="Player %s does not exist" %
+                                               pKey)
 
 
 class reportView(TemplatedView):
 
     def get(self):
-        keys = []
-        a=PlayerModel.query()
-        name_list= dict([(i.key.id(),"%s %s" % (i.first_name, i.last_name) )for i in a.iter()] )
+        a = player.get_entities()
+        name_list = dict([(i.key.id(),
+                           "%s %s" % (i.first_name, i.last_name))
+                          for i in a.iter()])
         #        logging.info(name_list)
         #        logging.info("::::")
         user = users.get_current_user()
@@ -246,22 +251,32 @@ class reportView(TemplatedView):
             try:
                 oppKey = self.request.GET["oppKey"]
                 self.render_response('reportGame.html',
-                                     user=[name_list[user.email()], ], userKey=user.email(),
-                                     names=name_list.values(), keys=name_list.keys(), key=oppKey)
+                                     user=[name_list[user.email()], ],
+                                     userKey=user.email(),
+                                     names=name_list.values(),
+                                     keys=name_list.keys(), key=oppKey)
             except KeyError:
-                self.render_response('reportGame.html', user=[name_list[user.email()], ],
-                                     userKey=user.email() , names=name_list.values(), keys=name_list.keys())
+                self.render_response('reportGame.html',
+                                     user=[name_list[user.email()]],
+                                     userKey=user.email(),
+                                     names=name_list.values(),
+                                     keys=name_list.keys())
         # If they are not logged in, show the "not logged in" front page
         else:
-            self.render_response('main2.html', login=users.create_login_url('/'))
+            self.render_response('main2.html',
+                                 login=users.create_login_url('/'))
 
 
 class selectorView(TemplatedView):
 
     def get(self):
-        a=PlayerModel.query()
-        name_list= dict([(i.key.id(),"%s %s" % (i.first_name, i.last_name) )for i in a.iter()] )
-        self.render_response('selector.html', names=name_list.values(), keys=name_list.keys())
+        a = player.get_entities()
+        name_list = dict([(i.key.id(),
+                           "%s %s" % (i.first_name, i.last_name))
+                          for i in a.iter()])
+        self.render_response('selector.html',
+                             names=name_list.values(),
+                             keys=name_list.keys())
 
 
 class settingsView(TemplatedView):
@@ -269,10 +284,14 @@ class settingsView(TemplatedView):
     def get(self, form_success=None):
         user = users.get_current_user()
         if user is not None:
-            key = ndb.Key(PlayerModel, user.email())
-            a = key.get()
-            player = player_utils.calc_player_info(a, key)
-            self.render_response("settings.html", user=a, key=player["email"], player=player, form_success=form_success)
+            key = player.get_key(user.email())
+            a = player.get_by_key(user.email())
+            one_player = player_utils.calc_player_info(a, key)
+            self.render_response("settings.html",
+                                 user=a,
+                                 key=one_player["email"],
+                                 player=player,
+                                 form_success=form_success)
         else:
             self.render_response("error.html", error_message=user)
 
@@ -282,7 +301,10 @@ class settingsView(TemplatedView):
             lname = self.request.POST["lname"]
             key = self.request.POST["key"]
 
-            player_utils.update_player_name(key, fname, lname)
+            success = player_utils.update_player_name(key, fname, lname)
 
-            self.get(form_success=True)
+            if success:
+                self.get(form_success=True)
+            else:
+                self.get(form_success=False)
 

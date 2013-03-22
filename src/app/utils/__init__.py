@@ -1,6 +1,6 @@
 import math
 
-from models import PlayerModel, GameModel
+from app.models import PlayerModel, GameModel
 
 PLAYER_A = 1
 PLAYER_B = 2

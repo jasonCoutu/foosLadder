@@ -3,8 +3,8 @@ import logging
 from operator import itemgetter
 from google.appengine.ext import ndb
 
-from models import PlayerModel, MatchModel
-from utils import calculate_winner, number_to_word
+from app.models import PlayerModel, MatchModel
+from app.utils import calculate_winner, number_to_word
 
 def update_player_name(key, fname, lname):
     user = PlayerModel.get_by_id(key)

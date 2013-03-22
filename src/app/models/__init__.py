@@ -24,7 +24,7 @@ class PlayerModel(ndb.Model):
     gamesPlayed = ndb.IntegerProperty(default=0)
     gamesWon = ndb.IntegerProperty(default=0)
     skillScore = ndb.IntegerProperty(default=100)
-    skillBase =ndb.StringProperty(choices=skillBase_names.keys())
+    skillBase = ndb.StringProperty(choices=skillBase_names.keys())
     lastGame = ndb.DateTimeProperty(auto_now=True)
 
 

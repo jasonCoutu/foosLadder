@@ -1,15 +1,15 @@
 __author__ = 'VendAsta'
 
 import logging
-import datetime
 
 from google.appengine.ext import ndb
 from google.appengine.api import users, mail
 
-import utils
+import app.utils as utils
 
-from views import TemplatedView
-from models import PlayerModel, GameModel, MatchModel, skillBase_names
+from app.views import TemplatedView
+from app.models import PlayerModel, GameModel, MatchModel, skillBase_names
+
 
 class ladderView(TemplatedView):
 
