@@ -16,11 +16,12 @@ def calculate_elo_rank(player_a_rank=1600, player_b_rank=1600, winner=PLAYER_A, 
     odds = 1 / (1 + math.pow(10, exp))
     if winner_rank < 2100:
         k = 32
-    elif winner_rank >= 2100 and winner_rank < 2400:
+    elif 2100 >= winner_rank < 2400:
         k = 24
     else:
         k = 16
         # Triple the points baby (doesn't really work)
+    k *= 3
     new_winner_rank = round(winner_rank + (k * (1 - odds)))
     if penalize_loser:
         # Triple the points baby (doesn't really work)
@@ -33,8 +34,9 @@ def calculate_elo_rank(player_a_rank=1600, player_b_rank=1600, winner=PLAYER_A, 
     if new_loser_rank < 100:
         new_loser_rank = 100
     if winner is PLAYER_A:
-        return (new_winner_rank, new_loser_rank)
-    return (new_loser_rank, new_winner_rank)
+        return new_winner_rank, new_loser_rank
+    return new_loser_rank, new_winner_rank
+
 
 def get_ladder():
     import datetime
@@ -46,6 +48,7 @@ def get_ladder():
     b=b.filter(PlayerModel.lastGame > lastweek)
 
     return (a, b)
+
 
 def calculate_score_from_post(request):
     game1 = GameModel()
@@ -85,7 +88,6 @@ def calculate_score_from_post(request):
 
     return [game1, game2, game3]
 
-    #name=a.first_name, last=a.last_name,skill=a.skillScore, wins=a.gamesWon, loses=(a.gamesPlayed - a.gamesWon)
 
 def calculate_winner(p1_score, p2_score):
     if p1_score > p2_score:
@@ -94,6 +96,7 @@ def calculate_winner(p1_score, p2_score):
         return "player2"
     else:
         return "tied"
+
 
 def number_to_word(number):
     if number > 9 or number < 0:

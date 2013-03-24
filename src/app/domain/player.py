@@ -1,6 +1,5 @@
-from google.appengine.ext import ndb
-
 from app.models import PlayerModel
+
 
 def get_entities(query=None):
     """ Get all PlayerModels by a query, or get all of them """
@@ -10,6 +9,20 @@ def get_entities(query=None):
         return PlayerModel.query()
 
 
+def get_multi_players(**kwargs):
+    players = list()
+
+    if "players" in kwargs.keys():
+        for player in kwargs["players"]:
+            current_player = get_by_email(player)
+            if current_player:
+                players.append(current_player)
+            else:
+                raise ValueError("Player must have a key that is their email")
+
+    return players
+
+
 def get_by_email(query):
     if query:
         return PlayerModel.query(PlayerModel.key == get_key(query)).get()
@@ -17,14 +30,17 @@ def get_by_email(query):
         return None
 
 
-def get_key(query):
-    if query:
-        return ndb.Key(PlayerModel, query)
+def get_key(email):
+    """ Build a PlayerModel key from an email passed in
+    """
+    if email:
+        return PlayerModel.build_key(email)
     else:
         return None
 
 
 def update_player_name(first_name, last_name, key):
+    """ Only supports updating the first and last name for now """
     if not key:
         raise ValueError("Key is required to update player")
     if not first_name:
@@ -50,7 +66,7 @@ def new_player(email, first_name, last_name, skillScore, skillBase):
     if not skillBase:
         raise ValueError("SkillBase is required")
 
-    player = PlayerModel(key=PlayerModel.build_key(email))
+    player = PlayerModel(key=get_key(email))
     player.first_name = first_name
     player.last_name = last_name
     player.skillScore = skillScore
