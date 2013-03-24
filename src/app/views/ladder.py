@@ -59,7 +59,7 @@ class ladderView(TemplatedView):
             loser = players[0]
         else:
             logging.info("No score submitted, loading ladder")
-            self.get()
+            self.redirect("/ladder-redirect")
             return
 
         logging.info("Winner: %s" % winner)
@@ -70,8 +70,8 @@ class ladderView(TemplatedView):
         logging.info("%s %s's old rank was %d" %
                      (loser.first_name, loser.last_name, loser.skillScore))
 
-        winnerRank, loserRank  = utils.calculate_elo_rank(winner.skillScore,
-                                                          loser.skillScore)
+        winnerRank, loserRank = utils.calculate_elo_rank(winner.skillScore,
+                                                         loser.skillScore)
 
         # Try returning the point change for some interesting data
         point_change = int(winnerRank - winner.skillScore)
@@ -147,7 +147,8 @@ class ladderView(TemplatedView):
 
         message.send()
 
-        self.redirect("/ladder", success=True, point_change=point_change)
+        # self.get(success=True, point_change=point_change)
+        self.redirect("/ladder-redirect")
 
     def get(self, **kwargs):
         players_total, actives = utils.get_ladder()

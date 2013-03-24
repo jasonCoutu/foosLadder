@@ -17,12 +17,9 @@ ROUTES = [
     Route('/leaderboard',   handler='app.views.leaderboardView'),
     Route('/matchHistory',  handler='app.views.matchHistoryView'),
     Route('/matchHistoryCalc', handler='app.views.matchHistoryCalc'),
+    Route('/ladder-redirect', handler='app.views.ladderRedirect'),
     SimpleRoute('/.+',      handler='app.views.errorHandler'),
-    ]
-
-ROUTES2 = [
-    Route('/viewAll', handler='views.ladderView'),
-    ]
+]
 
 TEMPLATE_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)),
                             'templates')
@@ -30,5 +27,3 @@ TEMPLATE_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)),
 CONFIG = {'webapp2_extras.jinja2': {'template_path': TEMPLATE_DIR}}
 
 app = WSGIApplication(ROUTES, config=CONFIG)
-
-app2 = WSGIApplication(ROUTES2, config=CONFIG)

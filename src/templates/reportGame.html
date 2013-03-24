@@ -10,7 +10,7 @@
 {% block heading %}Report your latest game{% endblock %}
 
 {% block page_content %}
-<form action="ladder" method="POST" class="form-inline">
+<form action="ladder" method="POST" class="form-inline" onsubmit="return formsubmit()">
 <fieldset>
     <legend>Combatants</legend>
     <p>Player 1: {{ user[0] }} (you!)</p>
@@ -26,11 +26,26 @@
 </fieldset>
     <input type="hidden" value="{{ userKey }}" id="player1" name="player1" />
     <br>
-    <button type="submit" class="btn">Submit scores!</button>
+    <button id="submitBtn" type="submit" class="btn">Submit scores!</button>
 </form>
 {% endblock %}
-{#{% block body_scripts %}#}
-{#    <script type="text/javascript">#}
+{% block body_scripts %}
+    <script type="text/javascript">
+        var formsubmit = function()
+        {
+            var player_2 = document.getElementById("player2");
+            var submit_btn = document.getElementById("submitBtn");
+            if(player_2.value != "")
+            {
+                submit_butn.disabled = true;
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    </script>
+{% endblock %}
 {#        Eventually it'd be nice to think about using this #}
 {#    $(document).bind('pageinit', function(){#}
 {##}
@@ -59,4 +74,3 @@
 {##}
 {#    });#}
 {#    </script>#}
-{# {% endblock %}#}

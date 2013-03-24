@@ -60,15 +60,24 @@ class errorHandler(TemplatedView):
         self.render_response("error.html", error_message=path)
 
 
+class ladderRedirect(TemplatedView):
+
+    def get(self):
+        """
+        Redirect to the ladder, fix/avoid the "refresh match resubmit" bug
+        """
+        self.redirect("/ladder")
+
+
 class leaderboardView(TemplatedView):
 
     def get(self):
         # get stats
         highest_goals = player_utils.get_highest_goals()
         highest_goals_against = player_utils.get_highest_goals(against=True)
-        highest_wins = player_utils.get_most_games(type="wins")
+        highest_wins = player_utils.get_most_games(calc_type="wins")
         highest_games = player_utils.get_most_games()
-        highest_losses = player_utils.get_most_games(type="losses")
+        highest_losses = player_utils.get_most_games(calc_type="losses")
         self.render_response("leaderboard.html", goals=highest_goals,
                              goals_against=highest_goals_against,
                              wins=highest_wins,
@@ -305,7 +314,7 @@ class settingsView(TemplatedView):
             lname = self.request.POST["lname"]
             key = self.request.POST["key"]
 
-            success = player_utils.update_player_name(key, fname, lname)
+            success = player_utils.update_player_name(fname, lname, key)
 
             if success:
                 self.get(form_success=True)

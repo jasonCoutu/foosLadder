@@ -1,6 +1,7 @@
 
 {% macro playerSel(names, keys, name='selector', oppKey="none") -%}
 <select id={{ name }} name={{ name }}>
+        <option value="">-- Select one --</option>
     {% for key in keys %}
         {% if oppKey == key %}
             <option selected="selected" value="{{ key }}">{{names[loop.index0]}}</option>

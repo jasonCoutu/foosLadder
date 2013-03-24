@@ -37,7 +37,7 @@ table.table thead .sorting_desc_disabled { background: url('/static/img/datatabl
 {% block page_content %}
     <div class="input-append">
         {{ playerSel(names, keys) }}
-        <button style="margin-left: 0.25px" id="btnSubmit" onclick="newPerson()" class="btn">Submit</button>
+        <button style="margin-left: 0.25px" id="btnSubmit" onclick="player_picked()" class="btn">Submit</button>
     </div>
     <br />
 
@@ -48,6 +48,18 @@ table.table thead .sorting_desc_disabled { background: url('/static/img/datatabl
 
 {% block body_scripts %}
     <script type="text/javascript">
+        var player_picked = function()
+        {
+            if(document.getElementById("selector").value == "")
+            {
+                // Do nothing
+            }
+            else
+            {
+                newPerson()
+            }
+        }
+
         var newPerson = function()
         {
             var $contentDiv = $("#whereItGoes");

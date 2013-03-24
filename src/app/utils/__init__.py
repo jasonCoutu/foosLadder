@@ -1,12 +1,15 @@
 import math
 
-from app.models import PlayerModel, GameModel
+from app.domain import game as game_dom
+from app.domain import player as player_dom
 
 PLAYER_A = 1
 PLAYER_B = 2
 
+
 #TODO: use this http://elo.divergentinformatics.com/ (or something like it)
-def calculate_elo_rank(player_a_rank=1600, player_b_rank=1600, winner=PLAYER_A, penalize_loser=True):
+def calculate_elo_rank(player_a_rank=1600, player_b_rank=1600, winner=PLAYER_A,
+                       penalize_loser=True):
     if winner is PLAYER_A:
         winner_rank, loser_rank = player_a_rank, player_b_rank
     else:
@@ -40,7 +43,7 @@ def calculate_elo_rank(player_a_rank=1600, player_b_rank=1600, winner=PLAYER_A, 
 
 def get_ladder():
     import datetime
-    a=PlayerModel.query()
+    players = player_dom.get_
     a=a.order(-PlayerModel.skillScore)
 
     b=PlayerModel.query()
@@ -51,9 +54,9 @@ def get_ladder():
 
 
 def calculate_score_from_post(request):
-    game1 = GameModel()
-    game2 = GameModel()
-    game3 = GameModel()
+    game1 = game_dom.new_game()
+    game2 = game_dom.new_game()
+    game3 = game_dom.new_game()
     if "game1" in request.POST.keys():
         winners = [request.POST['game1'],
                    request.POST['game2'],

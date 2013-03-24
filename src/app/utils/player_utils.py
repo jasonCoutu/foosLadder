@@ -1,44 +1,42 @@
 import logging
 
 from operator import itemgetter
-from google.appengine.ext import ndb
 
-from app.models import PlayerModel, MatchModel
+from app.domain import player as player_dom
+from app.domain import match as match_dom
 from app.utils import calculate_winner, number_to_word
 
-def update_player_name(key, fname, lname):
-    user = PlayerModel.get_by_id(key)
 
-    user.first_name = fname
-    user.last_name = lname
+def update_player_name(fname, lname, key):
+    player_dom.update_player_name(fname, lname, key)
 
-    user.put()
 
 def compare_players(user, opponent):
     pass
 
-def get_most_games(type="total", top=5):
+
+def get_most_games(calc_type="total", top=5):
     """
     Gets the top X number of people with the chosen type of game
-    @param type: Which type of games to calculate. The default is "total", which
-    will just get all games. Accepted inputs: "wins" and "losses"
+    @param calc_type: Which type of games to calculate. The default is "total",
+    which will just get all games. Accepted inputs: "wins" and "losses"
     @param top: Number of people to collect
     """
-    players = PlayerModel.query()
+    players = player_dom.get_entities()
     player_games = []
     for player in players:
         email = player.key.id()
         games = 0
         new_player = {
-            "email":email,
-            "data":0,
-            "full_name":get_player_full_name(email)
+            "email": email,
+            "data": 0,
+            "full_name": get_player_full_name(email)
         }
-        if type == "wins":
+        if calc_type == "wins":
             games = player.gamesWon
-        elif type == "losses":
+        elif calc_type == "losses":
             games = player.gamesPlayed - player.gamesWon
-        elif type == "total":
+        elif calc_type == "total":
             games = player.gamesPlayed
         new_player['data'] = games
         player_games.append(new_player)
@@ -48,7 +46,8 @@ def get_most_games(type="total", top=5):
     if len(sorted_players) < top:
         top = len(sorted_players)
 
-    return sorted_players[len(sorted_players)-top:]
+    return sorted_players[len(sorted_players) - top:]
+
 
 def get_highest_goals(against=False, top=5):
     """
@@ -59,13 +58,12 @@ def get_highest_goals(against=False, top=5):
     @param against: Pass True if you want this to count goals against
     @param top: Pass in the number of "top" people you want (e.g. Top 5)
     """
-    players = PlayerModel.query()
+    players = player_dom.get_entities()
 
     player_goals = []
     for player in players:
         email = player.key.id()
-        matches = MatchModel.query(ndb.OR(MatchModel.player1 == email,
-                                      MatchModel.player2 == email))
+        matches = match_dom.get_matches_by_email(email)
         goals = 0
         new_player = {
             'email': email,
@@ -101,13 +99,15 @@ def get_highest_goals(against=False, top=5):
 
     return sorted_players[len(sorted_players)-top:]
 
+
 def get_player_full_name(email):
     """
     Returns full name like "first last"
     @param email: Email/key of the person who's name you want
     """
-    user = PlayerModel.get_by_id(email)
+    user = player_dom.get_by_email(email)
     return user.first_name + " " + user.last_name
+
 
 def calc_player_info(player, key):
     """ Returns information for the player viewing page """
@@ -118,9 +118,7 @@ def calc_player_info(player, key):
     games = player.gamesPlayed
     total_losses = games - total_wins
     email = key.pairs()[0][1]
-    qry = MatchModel.query(ndb.OR(MatchModel.player1 == email,
-                                  MatchModel.player2 == email))
-    match_results = qry.order(-MatchModel.gameDate).fetch(5)
+    match_results = match_dom.get_matches_by_email(email, True, 5)
 
     last_five_wins = 0
     last_five_losses = 0
@@ -129,7 +127,8 @@ def calc_player_info(player, key):
         wins = 0
         losses = 0
         for i in range(0, len(result.scores)):
-            winner = calculate_winner(result.scores[i].player1, result.scores[i].player2)
+            winner = calculate_winner(result.scores[i].player1,
+                                      result.scores[i].player2)
             if winner == "player1":
                 if result.player1 == email:
                     wins += 1
@@ -147,18 +146,16 @@ def calc_player_info(player, key):
 
     total_games = number_to_word(last_five_wins + last_five_losses)
 
-    last_five_games = {"wins" : last_five_wins,
-                       "losses" : last_five_losses,
-                       "total" : total_games}
+    last_five_games = {"wins": last_five_wins,
+                       "losses": last_five_losses,
+                       "total": total_games}
 
     try:
         win_ratio = round(((total_wins / (games * 1.0)) * 100), 2)
     except ZeroDivisionError:
         win_ratio = 0
 
-    qry = MatchModel.query(ndb.OR(MatchModel.player1 == email,
-                                  MatchModel.player2 == email))
-    match_results = qry.order(-MatchModel.gameDate).fetch()
+    match_results = match_dom.get_matches_by_email(email, True)
 
     streak_wins = 0
     streak_losses = 0
@@ -170,7 +167,8 @@ def calc_player_info(player, key):
         losses = 0
         if first:
             for i in range(0, len(result.scores)):
-                winner = calculate_winner(result.scores[i].player1, result.scores[i].player2)
+                winner = calculate_winner(result.scores[i].player1,
+                                          result.scores[i].player2)
                 if winner == "player1":
                     if result.player1 == email:
                         wins += 1
@@ -190,7 +188,8 @@ def calc_player_info(player, key):
             first = False
         else:
             for i in range(0, len(result.scores)):
-                winner = calculate_winner(result.scores[i].player1, result.scores[i].player2)
+                winner = calculate_winner(result.scores[i].player1,
+                                          result.scores[i].player2)
                 if winner == "player1":
                     if result.player1 == email:
                         wins += 1
@@ -205,13 +204,15 @@ def calc_player_info(player, key):
                 if last_result == "wins":
                     streak_wins += 1
                 else:
-                    final_result = "Currently on a {} game losing streak".format(number_to_word(streak_losses))
+                    final_result = "Currently on a {} game losing streak".\
+                        format(number_to_word(streak_losses))
                     break
             elif losses > wins:
                 if last_result == "losses":
                     streak_losses += 1
                 else:
-                    final_result = "Currently on a {} game winning streak".format(number_to_word(streak_wins))
+                    final_result = "Currently on a {} game winning streak".\
+                        format(number_to_word(streak_wins))
                     break
     else:
         if len(match_results) == 0:
@@ -220,9 +221,11 @@ def calc_player_info(player, key):
     if final_result == "":
         #Need to calculate it
         if last_result == "wins":
-            final_result = "Currently on a {} game winning streak".format(number_to_word(streak_wins))
+            final_result = "Currently on a {} game winning streak".\
+                format(number_to_word(streak_wins))
         elif last_result == "losses":
-            final_result = "Currently on a {} game losing streak".format(number_to_word(streak_losses))
+            final_result = "Currently on a {} game losing streak".\
+                format(number_to_word(streak_losses))
 
     player = {
         "email": email,
@@ -239,13 +242,12 @@ def calc_player_info(player, key):
 
     return player
 
+
 def match_history(email):
     """
 
     """
-    qry = MatchModel.query(ndb.OR(MatchModel.player1 == email,
-        MatchModel.player2 == email))
-    match_results = qry.order(-MatchModel.gameDate).fetch()
+    match_results = match_dom.get_matches_by_email(email, True)
 
     history = []
 
@@ -256,7 +258,8 @@ def match_history(email):
         wins = 0
         losses = 0
         for i in range(0, len(result.scores)):
-            winner = calculate_winner(result.scores[i].player1, result.scores[i].player2)
+            winner = calculate_winner(result.scores[i].player1,
+                                      result.scores[i].player2)
             if winner == "player1":
                 if result.player1 == email:
                     wins += 1
@@ -269,22 +272,30 @@ def match_history(email):
                     wins += 1
 
         if result.player1 == email:
-            scores = str(result.scores[0].player1) + "-" + str(result.scores[0].player2) + ", " \
-                + str(result.scores[1].player1) + "-" + str(result.scores[1].player2) + ", " \
-                + str(result.scores[2].player1) + "-" + str(result.scores[2].player2)
+            scores = str(result.scores[0].player1) + "-" + \
+                str(result.scores[0].player2) + ", " + \
+                str(result.scores[1].player1) + "-" + \
+                str(result.scores[1].player2) + ", " + \
+                str(result.scores[2].player1) + "-" + \
+                str(result.scores[2].player2)
         else:
-            scores = str(result.scores[0].player2) + "-" + str(result.scores[0].player1) + ", " \
-                + str(result.scores[1].player2) + "-" + str(result.scores[1].player1) + ", " \
-                + str(result.scores[2].player2) + "-" + str(result.scores[2].player1)
+            scores = str(result.scores[0].player2) + "-" + \
+                str(result.scores[0].player1) + ", " + \
+                str(result.scores[1].player2) + "-" + \
+                str(result.scores[1].player1) + ", " + \
+                str(result.scores[2].player2) + "-" + \
+                str(result.scores[2].player1)
 
         if wins > losses:
 
-            history.append([count, str(result.gameDate.strftime('%h %d, %Y @ %I:%S')), \
-                True, scores, get_player_full_name(result.player1), \
+            history.append([count, str(
+                result.gameDate.strftime('%b %d, %Y @ %I:%S')),
+                True, scores, get_player_full_name(result.player1),
                 get_player_full_name(result.player2)])
         elif losses > wins:
-            history.append([count, str(result.gameDate.strftime('%h %d, %Y @ %I:%S')), \
-                False, scores, get_player_full_name(result.player1), \
+            history.append([count, str(
+                result.gameDate.strftime('%b %d, %Y @ %I:%S')),
+                False, scores, get_player_full_name(result.player1),
                 get_player_full_name(result.player2)])
 
     return history
