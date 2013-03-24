@@ -10,10 +10,9 @@ def get_entities(query=None):
         return PlayerModel.query()
 
 
-def get_by_key(query):
-    key = get_key(query)
-    if key:
-        return key.get()
+def get_by_email(query):
+    if query:
+        return PlayerModel.query(PlayerModel.key == get_key(query)).get()
     else:
         return None
 
@@ -25,33 +24,47 @@ def get_key(query):
         return None
 
 
-def update_player(**kwargs):
-    player = get_by_key(kwargs["key"])
-    if player:
-        if "first_name" in kwargs.keys():
-            player.first_name = kwargs["first_name"]
-        if "last_name" in kwargs.keys():
-            player.last_name = kwargs["last_name"]
-        return player.put()
-    else:
-        return None
-        # first_name = ndb.StringProperty(required=True)
-        # last_name = ndb.StringProperty(required=True)
-        # gamesPlayed = ndb.IntegerProperty(default=0)
-        # gamesWon = ndb.IntegerProperty(default=0)
-        # skillScore = ndb.IntegerProperty(default=100)
-        # skillBase =ndb.StringProperty(choices=skillBase_names.keys())
-        # lastGame = ndb.DateTimeProperty(auto_now=True)
+def update_player_name(first_name, last_name, key):
+    if not key:
+        raise ValueError("Key is required to update player")
+    if not first_name:
+        raise ValueError("First name is required")
+    if not last_name:
+        raise ValueError("Last name is required")
 
-
-def new_player(**kwargs):
-    player = PlayerModel()
-    if "first_name" in kwargs.keys():
-        player.first_name = kwargs["first_name"]
-    if "last_name" in kwargs.keys():
-        player.last_name = kwargs["last_name"]
-    if "skillScore" in kwargs.keys():
-        player.skillScore = kwargs["skillScore"]
-    if "skillBase" in kwargs.keys():
-        player.skillBase = kwargs["skillBase"]
+    player = get_by_email(key)
+    player.first_name = first_name
+    player.last_name = last_name
     return player.put()
+
+
+def new_player(email, first_name, last_name, skillScore, skillBase):
+    if not email:
+        raise ValueError("Email is required")
+    if not first_name:
+        raise ValueError("First name is required")
+    if not last_name:
+        raise ValueError("Last name is required")
+    if not skillScore:
+        raise ValueError("SkillScore is required")
+    if not skillBase:
+        raise ValueError("SkillBase is required")
+
+    player = PlayerModel(key=PlayerModel.build_key(email))
+    player.first_name = first_name
+    player.last_name = last_name
+    player.skillScore = skillScore
+    player.skillBase = skillBase
+
+    return player.put()
+
+# How it used to work:
+# a = PlayerModel(key=keys[0])
+# a.skillBase = self.request.POST['skillBaseVal']
+# a.first_name = fname
+# a.last_name = lname
+# a.gamesPlayed = played
+# a.gamesWon = won
+# a.skillScore = int(skillBase_names[a.skillBase])
+# logging.debug("Putting new Player %s" % key)
+# a.put()

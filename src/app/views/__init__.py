@@ -9,7 +9,6 @@ import app.utils as utils
 import app.utils.player_utils as player_utils
 import app.domain.player as player
 from app.domain import skillBase_names as skillBase_function
-from app.models import GameModel, MatchModel
 
 
 class TemplatedView(RequestHandler):
@@ -81,7 +80,7 @@ class mainView(TemplatedView):
     def get(self):
         user = users.get_current_user()
         if user:
-            a = player.get_by_key(user.email())
+            a = player.get_by_email(user.email())
             if a:
                 players_total, actives = utils.get_ladder()
                 user = users.get_current_user()
@@ -153,7 +152,7 @@ class newPlayerView(TemplatedView):
 
     def get(self):
         user = users.get_current_user()
-        a = player.get_by_key(user.email())
+        a = player.get_by_email(user.email())
         if a:
             a, b = utils.get_ladder()
             self.render_response('main.html',
@@ -197,8 +196,13 @@ class newPlayerView(TemplatedView):
         a["gamesWon"] = won
         a["skillScore"] = int(skillBase_function()[a["skillBase"]])
         logging.debug("Putting new Player %s" % key)
-        player.new_player(**a)
-        self.redirect("/")
+        success = player.new_player(key,
+                                    fname,
+                                    lname,
+                                    a["skillScore"],
+                                    a["skillBase"])
+        if success:
+            self.redirect("/")
 
 
 class playerView(TemplatedView):
@@ -209,7 +213,7 @@ class playerView(TemplatedView):
         self.render_response("selector.html", names=name_list.values(), keys=name_list.keys())
 
     def post(self):
-        a = player.get_by_key(self.request.POST['selector'])
+        a = player.get_by_email(self.request.POST['selector'])
         key = player.get_key(self.request.POST['selector'])
         one_player = player_utils.calc_player_info(a, key)
         logging.info("Displaying info on %s %s" % (one_player["name"],
@@ -223,7 +227,7 @@ class playerStatsView(TemplatedView):
         pKey = self.request.GET["key"]
         if pKey:
             key = player.get_key(str(pKey))
-            a = player.get_by_key(str(pKey))
+            a = player.get_by_email(str(pKey))
             one_player = player_utils.calc_player_info(a, key)
             user = users.get_current_user()
             logging.info("Displaying info on %s %s" % (one_player["name"],
@@ -285,7 +289,7 @@ class settingsView(TemplatedView):
         user = users.get_current_user()
         if user is not None:
             key = player.get_key(user.email())
-            a = player.get_by_key(user.email())
+            a = player.get_by_email(user.email())
             one_player = player_utils.calc_player_info(a, key)
             self.render_response("settings.html",
                                  user=a,

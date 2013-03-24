@@ -18,7 +18,6 @@ skillBase_names = {"Senior Master": 2400,
 
 
 class PlayerModel(ndb.Model):
-
     first_name = ndb.StringProperty(required=True)
     last_name = ndb.StringProperty(required=True)
     gamesPlayed = ndb.IntegerProperty(default=0)
@@ -27,6 +26,10 @@ class PlayerModel(ndb.Model):
     skillBase = ndb.StringProperty(choices=skillBase_names.keys())
     lastGame = ndb.DateTimeProperty(auto_now=True)
 
+    @classmethod
+    def build_key(cls, email):
+        return ndb.Key(PlayerModel, email)
+
 
 class GameModel(ndb.Model):
     player1 = ndb.IntegerProperty(required=True)
@@ -34,7 +37,6 @@ class GameModel(ndb.Model):
 
 
 class MatchModel(ndb.Model):
-
     gameDate = ndb.DateTimeProperty(auto_now=True)
     player1 = ndb.StringProperty(required=True)
     player2 = ndb.StringProperty(required=True)

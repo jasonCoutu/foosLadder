@@ -1,0 +1,144 @@
+<?xml version="1.0"?>
+<project name="foosladder" default="test" basedir=".">
+
+    <property environment="env"/>
+    <property name="srcdir" value="${basedir}/src"/>
+    <property name="testdir" value="${basedir}/test"/>
+    <property name="toolsdir" value="${basedir}/tools"/>
+    <property name="tests" value=""/> <!-- use, e.g., "ant test -Dtests=app.domain.my_module" -->
+    <property name="test.verbosity" value="1"/>
+    <property name="test.loglevel" value="50"/>
+
+    <property name="yuicompressor.jar" value="${toolsdir}/ant/yuicompressor-2.4.6.jar"/>
+    <property name="coveragedir" value="coverage-report"/>
+    <property name="python.executable" value="python2.7" />
+
+    <condition property="appenginedir" value="/usr/local/google_appengine">
+        <available type="dir" file="/usr/local/google_appengine" />
+    </condition>
+    <condition property="appenginedir" value="C:\Program Files (x86)\Google\google_appengine">
+        <available type="dir" file="C:\Program Files (x86)\Google\google_appengine\google\appengine" />
+    </condition>
+    <condition property="appenginedir" value="C:\Program Files\Google\google_appengine">
+        <available type="dir" file="C:\Program Files\Google\google_appengine\google\appengine" />
+    </condition>
+
+    <property name="debug" value="True"/>
+
+    <path id="tests.pythonpath.ref">
+        <pathelement path="${env.PYTHONPATH}"/>
+        <pathelement path="${testdir}"/>
+        <pathelement path="${srcdir}"/>
+        <pathelement path="${srcdir}/lib"/>
+        <pathelement path="${basedir}"/>
+        <pathelement path="${appenginedir}"/>
+        <pathelement path="${appenginedir}/lib/webapp2-2.5.2"/>
+        <pathelement path="${appenginedir}/lib/jinja2-2.6"/>
+        <pathelement path="${appenginedir}/lib/webob-1.1.1"/>
+        <pathelement path="${appenginedir}/lib/simplejson"/>
+        <pathelement path="${appenginedir}/lib/yaml/lib"/>
+        <pathelement path="${appenginedir}/lib/fancy_urllib"/>
+        <pathelement path="${toolsdir}"/>
+        <pathelement path="${toolsdir}/coverage-3.5.1"/>
+        <pathelement path="${toolsdir}/minimock"/>
+    </path>
+
+    <property name="tests.pythonpath" value="${toString:tests.pythonpath.ref}" />
+
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="${basedir}/tools/ant/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
+
+    <target name="clean">
+        <delete>
+            <fileset dir="${srcdir}" includes="**/*.pyc" />
+            <fileset dir="${srcdir}" includes="**/*.pyo" />
+            <fileset dir="${testdir}" includes="**/*.pyc" />
+            <fileset dir="${testdir}" includes="**/*.pyo" />
+            <fileset dir="${testotwdir}" includes="**/*.pyc" />
+            <fileset dir="${testotwdir}" includes="**/*.pyo" />
+            <fileset dir="${toolsdir}" includes="**/*.pyc" />
+            <fileset dir="${toolsdir}" includes="**/*.pyo" />
+        </delete>
+        <delete dir="${builddir}"/>
+    </target>
+
+    <target name="test">
+        <exec dir="${basedir}" executable="python" failonerror="true">
+            <env key="PYTHONPATH" value="${tests.pythonpath}"/>
+            <env key="UNITTEST_VERBOSITY" value="${test.verbosity}"/>
+            <env key="UNITTEST_LOGLEVEL" value="${test.loglevel}"/>
+            <env key="APPLICATION_ID" value="testbed"/>
+            <arg line="${toolsdir}/test_runner.py ${tests}"/>
+        </exec>
+    </target>
+
+    <target name="pylint-output-teamcity">
+        <property name="pylint.output.teamcity" value="true"/>
+    </target>
+
+    <target name="pylint-module-src">
+        <property name="pylint.module" value="app"/>
+        <property name="pylint.cwd" value="${srcdir}"/>
+        <property name="pylint.disable_msg" value=""/>
+        <property name="pylint.pylintrcfile" value="${toolsdir}/pylintrc"/>
+    </target>
+
+
+    <target name="pylint-module-test">
+        <property name="pylint.module" value="test"/>
+        <property name="pylint.cwd" value="${basedir}"/>
+        <property name="pylint.pylintrcfile" value="${toolsdir}/pylintrc-test"/>
+        <!-- C0111 no docstring warnings for test -->
+        <!-- W0201 allow attributes to be defined outside of __init__ (good for mocks) for test -->
+        <!-- C0302 too many lines in module -->
+        <property name="pylint.disable_msg" value="C0111,W0201,C0302"/>
+    </target>
+
+    <target name="_pylint">
+
+        <exec dir="${pylint.cwd}" executable="python" failonerror="false" outputproperty="pylint.output">
+            <env key="PYTHONPATH" value="${tests.pythonpath}" />
+            <arg line="${toolsdir}/pylint/lint.py --rcfile=${pylint.pylintrcfile} --include-ids=y ${pylint.module}"/>
+            <arg line="--disable=${pylint.disable_msg}"/>
+        </exec>
+
+        <!-- echo for debugging -->
+        <echo>${pylint.output}</echo>
+
+        <!-- write to a file if pylint.output.teamcity is set -->
+        <if>
+            <isset property="pylint.output.teamcity"/>
+            <then>
+                <echo message="${pylint.output}" file="/tmp/pylint.output"/>
+            </then>
+            <else>
+                <!-- make sure the output is as expected -->
+                <fail message="Pylint produced output. It must have failed.">
+                    <condition>
+                        <not>
+                            <equals arg1="${pylint.output}" arg2=""/>
+                        </not>
+                    </condition>
+                </fail>
+            </else>
+        </if>
+    </target>
+
+    <target name="pylint" depends="pylint-module-src, _pylint"/>
+    <target name="pylint-test" depends="pylint-module-test, _pylint"/>
+    <target name="pylint-teamcity" depends="pylint-output-teamcity, pylint-module-src, _pylint"/>
+    <target name="pylint-test-teamcity" depends="pylint-output-teamcity, pylint-module-test, _pylint"/>
+
+    <target name="coverage" depends="clean">
+        <exec dir="${basedir}" executable="python" failonerror="true">
+            <env key="PYTHONPATH" value="${tests.pythonpath}"/>
+            <env key="CODE_COVERAGE_DIR" value="${coveragedir}"/>
+            <env key="APPLICATION_ID" value="testbed"/>
+            <arg line="${toolsdir}/test_runner.py ${tests}"/>
+        </exec>
+    </target>
+
+</project>
