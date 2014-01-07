@@ -1,3 +1,5 @@
+import datetime
+
 from app.models import PlayerModel
 
 
@@ -20,6 +22,35 @@ def get_multi_players(**kwargs):
             else:
                 raise ValueError("Player must have a key that is their email")
 
+    return players
+
+
+def get_active_players(days):
+    if not days:
+        raise ValueError("Must have a value to search for")
+    players = get_entities()
+    delta = datetime.datetime.now() - datetime.timedelta(days=days)
+
+    return players.filter(PlayerModel.lastGame > delta)
+
+
+def has_been_active(days, player):
+    if not days:
+        raise ValueError("Must pass in amount of days to check")
+    if not isinstance(player, PlayerModel):
+        raise ValueError("You must pass in a PlayerModel")
+    delta = datetime.datetime.now() - datetime.timedelta(days=days)
+    if player.lastGame > delta:
+        return True
+    return False
+
+
+def get_players_sorted_skill_score(asc=True):
+    players = get_entities()
+    if asc:
+        players = players.order(PlayerModel.skillScore)
+    else:
+        players = players.order(-PlayerModel.skillScore)
     return players
 
 

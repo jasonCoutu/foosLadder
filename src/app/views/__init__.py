@@ -7,7 +7,7 @@ from webapp2_extras import jinja2
 import json
 import app.utils as utils
 import app.utils.player_utils as player_utils
-import app.domain.player as player
+import app.domain.player as player_dom
 from app.domain import skillBase_names as skillBase_function
 
 
@@ -40,12 +40,12 @@ class compareView(TemplatedView):
 
     def get(self):
         user = users.get_current_user()
-        a = player.get_entities()
+        a = player_dom.get_entities()
         name_list = dict([(i.key.id(), "%s %s" % (i.first_name, i.last_name) ) for i in a.iter()])
         self.render_response("compare.html", user=user, names=name_list.values(), keys=name_list.keys())
 
     def post(self):
-        player_key = player.get_key(self.request.POST['selector'])
+        player_key = player_dom.get_key(self.request.POST['selector'])
         user = self.request.POST["user"]
         stats = player_utils.compare_players(player_key, user)
 
@@ -89,7 +89,7 @@ class mainView(TemplatedView):
     def get(self):
         user = users.get_current_user()
         if user:
-            a = player.get_by_email(user.email())
+            a = player_dom.get_by_email(user.email())
             if a:
                 players_total, actives = utils.get_ladder()
                 user = users.get_current_user()
@@ -140,7 +140,7 @@ class matchHistoryView(TemplatedView):
 
     def get(self):
         user = users.get_current_user()
-        a = player.get_entities()
+        a = player_dom.get_entities()
         name_list = dict([(i.key.id(),
                            "%s %s" % (i.first_name, i.last_name))
                           for i in a.iter()])
@@ -161,7 +161,7 @@ class newPlayerView(TemplatedView):
 
     def get(self):
         user = users.get_current_user()
-        a = player.get_by_email(user.email())
+        a = player_dom.get_by_email(user.email())
         if a:
             a, b = utils.get_ladder()
             self.render_response('main.html',
@@ -197,19 +197,17 @@ class newPlayerView(TemplatedView):
         if "score" in self.request.POST.keys():
             score = int(self.request.POST["score"])
 
-        a = dict()
-        a["skillBase"] = self.request.POST['skillBaseVal']
-        a["first_name"] = fname
-        a["last_name"] = lname
-        a["gamesPlayed"] = played
-        a["gamesWon"] = won
-        a["skillScore"] = int(skillBase_function()[a["skillBase"]])
+        player = dict()
+        player["skillBase"] = self.request.POST['skillBaseVal']
+        player["first_name"] = fname
+        player["last_name"] = lname
+        player["gamesPlayed"] = played
+        player["gamesWon"] = won
+        player["skillScore"] = int(skillBase_function()[player["skillBase"]])
         logging.debug("Putting new Player %s" % key)
-        success = player.new_player(key,
-                                    fname,
-                                    lname,
-                                    a["skillScore"],
-                                    a["skillBase"])
+        success = player_dom.new_player(key, fname, lname,
+                                        player["skillScore"],
+                                        player["skillBase"])
         if success:
             self.redirect("/")
 
@@ -217,13 +215,13 @@ class newPlayerView(TemplatedView):
 class playerView(TemplatedView):
 
     def get(self):
-        a = player.get_entities()
+        a = player_dom.get_entities()
         name_list = dict([(i.key.id(), "%s %s" % (i.first_name, i.last_name) ) for i in a.iter()])
         self.render_response("selector.html", names=name_list.values(), keys=name_list.keys())
 
     def post(self):
-        a = player.get_by_email(self.request.POST['selector'])
-        key = player.get_key(self.request.POST['selector'])
+        a = player_dom.get_by_email(self.request.POST['selector'])
+        key = player_dom.get_key(self.request.POST['selector'])
         one_player = player_utils.calc_player_info(a, key)
         logging.info("Displaying info on %s %s" % (one_player["name"],
                                                    one_player["last"]))
@@ -235,8 +233,8 @@ class playerStatsView(TemplatedView):
     def get(self):
         pKey = self.request.GET["key"]
         if pKey:
-            key = player.get_key(str(pKey))
-            a = player.get_by_email(str(pKey))
+            key = player_dom.get_key(str(pKey))
+            a = player_dom.get_by_email(str(pKey))
             one_player = player_utils.calc_player_info(a, key)
             user = users.get_current_user()
             logging.info("Displaying info on %s %s" % (one_player["name"],
@@ -252,7 +250,7 @@ class playerStatsView(TemplatedView):
 class reportView(TemplatedView):
 
     def get(self):
-        a = player.get_entities()
+        a = player_dom.get_entities()
         name_list = dict([(i.key.id(),
                            "%s %s" % (i.first_name, i.last_name))
                           for i in a.iter()])
@@ -283,7 +281,7 @@ class reportView(TemplatedView):
 class selectorView(TemplatedView):
 
     def get(self):
-        a = player.get_entities()
+        a = player_dom.get_entities()
         name_list = dict([(i.key.id(),
                            "%s %s" % (i.first_name, i.last_name))
                           for i in a.iter()])
@@ -297,13 +295,13 @@ class settingsView(TemplatedView):
     def get(self, form_success=None):
         user = users.get_current_user()
         if user is not None:
-            key = player.get_key(user.email())
-            a = player.get_by_email(user.email())
+            key = player_dom.get_key(user.email())
+            a = player_dom.get_by_email(user.email())
             one_player = player_utils.calc_player_info(a, key)
             self.render_response("settings.html",
                                  user=a,
                                  key=one_player["email"],
-                                 player=player,
+                                 player=player_dom,
                                  form_success=form_success)
         else:
             self.render_response("error.html", error_message=user)

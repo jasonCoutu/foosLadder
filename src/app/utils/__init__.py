@@ -42,15 +42,10 @@ def calculate_elo_rank(player_a_rank=1600, player_b_rank=1600, winner=PLAYER_A,
 
 
 def get_ladder():
-    import datetime
-    players = player_dom.get_
-    a=a.order(-PlayerModel.skillScore)
+    players = player_dom.get_players_sorted_skill_score(False)
+    active_players = player_dom.get_active_players(1)
 
-    b=PlayerModel.query()
-    lastweek = datetime.datetime.now() - datetime.timedelta(days=7)
-    b=b.filter(PlayerModel.lastGame > lastweek)
-
-    return (a, b)
+    return players, active_players
 
 
 def calculate_score_from_post(request):

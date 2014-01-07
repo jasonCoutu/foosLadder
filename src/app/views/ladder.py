@@ -7,7 +7,7 @@ from google.appengine.api import users, mail
 import app.utils as utils
 
 from app.views import TemplatedView
-from app.domain import player
+from app.domain import player as player_dom
 from app.domain import match
 
 
@@ -21,8 +21,8 @@ class ladderView(TemplatedView):
         game_played.scores = utils.calculate_score_from_post(self.request)
 
         #TODO: Break rest of the score calculation into utils.py
-        players = player.get_multi_players(players=[game_played.player1,
-                                                    game_played.player2])
+        players = player_dom.get_multi_players(players=[game_played.player1,
+                                                        game_played.player2])
         p1_total = [game_played.scores[0].player1,
                     game_played.scores[1].player1,
                     game_played.scores[2].player1]
@@ -155,9 +155,10 @@ class ladderView(TemplatedView):
         user = users.get_current_user()
         players = list()
         for player in players_total.iter():
-            players.append((player.key.id(), "%s %s" % (player.first_name,
-                                                        player.last_name),
-                            player.skillScore))
+            if player_dom.has_been_active(1, player):
+                players.append((player.key.id(), "%s %s" % (player.first_name,
+                                                            player.last_name),
+                                player.skillScore))
         self.render_response('ladder.html',
                              players=players,
                              numplayers=players_total.count(),
